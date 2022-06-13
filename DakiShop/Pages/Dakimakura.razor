@@ -1,0 +1,17 @@
+﻿@page "/Dakimakura/{ID}"
+
+<PageTitle>Store</PageTitle>
+
+<h1>hello miga @a</h1>
+
+
+@code {
+    [Parameter] public string ID { get; set; }
+
+    int a = 0;
+
+    protected override void OnParametersSet()
+    {
+         a= int.Parse(ID);
+    }
+}

@@ -1,9 +1,50 @@
 ﻿@page "/"
+@using DakiShop.Models
+@inject Blazored.LocalStorage.ILocalStorageService oLocalStore;
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Store</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<input @bind-value="FilePath" type="file"/>
+<a>@FilePath </a>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<NavLink href="/Dakimakura/1">
+   <br> <button>Dakimakura</button> <br>
+</NavLink>
+
+
+<br><br><br><br>
+<label> Welcome, @UserName </label>
+
+
+<br>
+<button class="btn btn-success" @onclick="SaveSession"> LogIn </button>
+<button class="btn btn-success" @onclick="ClearSession"> LogOut </button>
+
+@code{
+    string UserName = "Guest";
+    string FilePath = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            string a = await oLocalStore.GetItemAsync<string>("UserName");
+            UserName = a == null? "Guest":a;
+            StateHasChanged();
+        }
+    }
+
+
+
+    public async void SaveSession()
+    {
+        UserName = "Nigger";
+        await oLocalStore.SetItemAsync("UserName", "Nigger");
+    }
+    public async void ClearSession()
+    {
+        UserName = "Guest";
+        await oLocalStore.ClearAsync();
+    }
+}
