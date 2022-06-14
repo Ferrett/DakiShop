@@ -1,50 +1,128 @@
 ﻿@page "/"
+@using DakiShop.Logic
 @using DakiShop.Models
-@inject Blazored.LocalStorage.ILocalStorageService oLocalStore;
+@inject Blazored.LocalStorage.ILocalStorageService session;
 
 <PageTitle>Store</PageTitle>
 
-
-<input @bind-value="FilePath" type="file"/>
+@*<input @bind-value="FilePath" type="file"/>
 <a>@FilePath </a>
-
 <NavLink href="/Dakimakura/1">
    <br> <button>Dakimakura</button> <br>
 </NavLink>
-
-
 <br><br><br><br>
 <label> Welcome, @UserName </label>
-
-
 <br>
 <button class="btn btn-success" @onclick="SaveSession"> LogIn </button>
-<button class="btn btn-success" @onclick="ClearSession"> LogOut </button>
+<button class="btn btn-success" @onclick="ClearSession"> LogOut </button>*@
+
+<div class="site-holder">
+    <div class="main-container">
+        <div class="filters-container">
+            <div class="search-field">
+                <span class="search-label">Find by name</span>
+                <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput"/>
+
+               
+            </div>
+             <input type="range" class="price-range" id="points" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
+                <span><br />@current_price ₴</span>
+        </div>
+    </div>
+</div>
+
+
+               
+
+<div class="stretched">
+    <div class="assortment-container">
+        @if (DBService.dakimakuras.Count == 0 || (!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0))
+        {
+            <div class="assortment-container-stretched">Sorry! Nothing has been found by your request!</div>
+        }
+        else
+        {
+            foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
+            {
+                <element @onclick="myScript" class="card">
+                    <div>
+                        <img class="card-img" src=@item.ImagePath>
+                    </div>
+                    <div>
+                        <div class="card-title">@item.Name</div>
+         
+                        <div class="card-info">
+                            <div class="card-price">@item.Price ₴</div>
+                            <img class="card-rating-image" src="https://mercatopizzakurier.ch/wp-content/uploads/2019/10/1459955-free-png-pepperoni-pizza-png-images-transparent-free-png-images-pizza-850_834.png">
+                            <div class="card-rating-score">@item.Rating</div>
+                        </div>
+                    </div>
+                </element>
+            }
+        }
+    </div>
+</div>
+
+
+
+<div id="full-stars-example-two">
+    <div class="rating-group">
+        <input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
+        <label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
+        <label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
+        <label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
+        <label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
+        <label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+        <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+    </div>
+  <p class="desc" style="font-family: sans-serif; font-size:0.9rem">Full stars<br/>
+    Must select a star value</p>
+</div>
+
 
 @code{
-    string UserName = "Guest";
+    string name = "2";
+    int dishCount = 1;
+    double dishPrice = 4;
+    double totalPrice = 4;
+    string searchQuery = "";
+
+    int max_price = 10000;
+    int current_price = 1000;
+    int step = 100;
+
+    private void myScript()
+    {
+
+    }
+
+    //  Session
+    #region Session
+        string UserName = "Guest";
     string FilePath = string.Empty;
+    public async void SaveSession()
+    {
+        UserName = "Nigger";
+        await session.SetItemAsync("UserName", "Nigger");
+    }
+    public async void ClearSession()
+    {
+        UserName = "Guest";
+        await session.ClearAsync();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            string a = await oLocalStore.GetItemAsync<string>("UserName");
+            string a = await session.GetItemAsync<string>("UserName");
             UserName = a == null? "Guest":a;
             StateHasChanged();
         }
     }
-
-
-
-    public async void SaveSession()
-    {
-        UserName = "Nigger";
-        await oLocalStore.SetItemAsync("UserName", "Nigger");
-    }
-    public async void ClearSession()
-    {
-        UserName = "Guest";
-        await oLocalStore.ClearAsync();
-    }
+    #endregion
 }

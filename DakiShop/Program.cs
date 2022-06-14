@@ -3,6 +3,7 @@ using Blazored.SessionStorage;
 using DakiShop.Logic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using DakiShop.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,17 @@ builder.Services.AddServerSideBlazor();
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+builder.Services.AddBlazoredSessionStorage();
+builder.Services.AddBlazoredLocalStorage();
 
 AWSManager.UserKey = Config.configuration.GetSection("AWSKeys")["UserKey"];
 AWSManager.SecretKey = Config.configuration.GetSection("AWSKeys")["SecretKey"];
-builder.Services.AddBlazoredSessionStorage();
-builder.Services.AddBlazoredLocalStorage();
+
+DBService.InitDB();
+//DBService.AddDakimakuraToDB();
+
+DBService.GetDakimakurasFromDB();
+
 //AWSManager.UploadFile(File.Open(@"C:\Users\User\Desktop\photo_2022-05-26_12-34-43.jpg", FileMode.Open), "dakisource", "new amogus2");
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
