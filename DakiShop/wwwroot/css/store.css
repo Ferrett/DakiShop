@@ -27,7 +27,7 @@
     margin-top: 50px;
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: normal;
 }
 
 .search-field {
@@ -251,15 +251,16 @@ label {
 
 .price-range {
     -webkit-appearance: none;
+    margin-top: 10px;
     border-radius: 5px;
-    background: linear-gradient(90deg,rgb(117,252,117)60%,rgb(214,214,214)60%);
+    background: linear-gradient(90deg,rgb(214,214,214)60%,rgb(214,214,214)60%);
     outline: none;
     opacity: 0.7;
     -webkit-transition: 0.2s;
     transition: opacity 0.2s;
     border: 2px solid #112837;
-    width: 85%;
-    height: 15px;
+    height: 20px;
+    min-width: 300px;
 }
 
     .price-range:hover {
@@ -270,13 +271,29 @@ label {
         appearance: none;
         cursor: pointer;
         background: rgb(200,200,200);
-        width: 25px;
-        height: 25px;
+        width: 30px;
+        height: 30px;
         border: 3px;
         border-color: black;
         border-radius: 50%;
         border: 1px solid #112837;
     }
+
+.scroll-field 
+{
+    width: 30%;
+    margin-right: 120px;
+    
+}
+.scroll-label {
+    margin-top: 20px;
+    font-family: 'Circe-B';
+    font-size: 25px;
+    margin-left: 22px;
+    padding: 0 50px;
+    background-color: white;
+    position: relative;
+}
 
 .category {
     margin-left: 20px;

@@ -6,3 +6,13 @@
 }
 
 <component type="typeof(App)" render-mode="Server" />
+
+
+ <script>
+    setIcon = () => {var slider = document.getElementById("myRange");
+    slider.addEventListener("mousemove", function () {
+    var x = slider.value/100;
+    var color = 'linear-gradient(90deg, rgb(117,252,117)' + x + '%,rgb(214,214,214)' + x + '%)';
+    slider.style.background = color;
+})};
+</script>

@@ -2,6 +2,7 @@
 @using DakiShop.Logic
 @using DakiShop.Models
 @inject Blazored.LocalStorage.ILocalStorageService session;
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Store</PageTitle>
 
@@ -22,16 +23,14 @@
             <div class="search-field">
                 <span class="search-label">Find by name</span>
                 <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput"/>
-
-               
             </div>
-             <input type="range" class="price-range" id="points" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
-                <span><br />@current_price ₴</span>
+             <div class="search-field">
+              <span class="scroll-label" >Price: @current_price ₴</span>
+               <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
+             </div>
         </div>
     </div>
 </div>
-
-
                
 
 <div class="stretched">
@@ -44,8 +43,10 @@
         {
             foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
             {
-                <element @onclick="myScript" class="card">
-                    <div>
+                @if(item.Price<= current_price) 
+                {
+                    <element @onclick="myScript" class="card">
+                        <div>
                         <img class="card-img" src=@item.ImagePath>
                     </div>
                     <div>
@@ -58,6 +59,7 @@
                         </div>
                     </div>
                 </element>
+                }
             }
         }
     </div>
@@ -100,29 +102,38 @@
 
     }
 
-    //  Session
-    #region Session
-        string UserName = "Guest";
-    string FilePath = string.Empty;
-    public async void SaveSession()
-    {
-        UserName = "Nigger";
-        await session.SetItemAsync("UserName", "Nigger");
-    }
-    public async void ClearSession()
-    {
-        UserName = "Guest";
-        await session.ClearAsync();
-    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            string a = await session.GetItemAsync<string>("UserName");
-            UserName = a == null? "Guest":a;
-            StateHasChanged();
+            await JSRuntime.InvokeVoidAsync("setIcon");      
         }
-    }
-    #endregion
+    }    
+
+    //  Session
+    //#region Session
+    //    string UserName = "Guest";
+    //string FilePath = string.Empty;
+    //public async void SaveSession()
+    //{
+    //    UserName = "Nigger";
+    //    await session.SetItemAsync("UserName", "Nigger");
+    //}
+    //public async void ClearSession()
+    //{
+    //    UserName = "Guest";
+    //    await session.ClearAsync();
+    //}
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if(firstRender)
+    //    {
+    //        string a = await session.GetItemAsync<string>("UserName");
+    //        UserName = a == null? "Guest":a;
+    //        StateHasChanged();
+    //    }
+    //}
+    //#endregion
 }
