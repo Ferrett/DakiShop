@@ -21,28 +21,25 @@
     <div class="main-container">
         <div class="filters-container">
             <div class="search-field">
-                <span class="search-label">Find by name</span>
+
                 <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput"/>
             </div>
-             <div class="scroll-field">
-              <span class="scroll-label" >Price: @current_price ₴</span>
-               <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
-             </div>
-           
-              <div class="category-field">
-                  
-
-            <div class="select">
-                <select @bind="selectedCategory" id="format">  
-                <option value="0">All</option>
-                @foreach (var item in DBService.categories)
-                {
-                   <option value=@item.ID>@item.Name</option>      
-                }
-                </select>
-            </div>
+            <div class="scroll-field">
+                <span class="scroll-label" >Max Price: @current_price ₴</span>
+                <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
             </div>
            
+            <div class="category-field">
+                <div class="select">
+                    <select @bind="selectedCategory" id="format">  
+                    <option value="0">All</option>
+                    @foreach (var item in DBService.categories)
+                    {
+                      <option value=@item.ID>@item.Name</option>      
+                    }
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -52,7 +49,8 @@
     <div class="assortment-container">
         @if (DBService.dakimakuras.Count == 0 
         || (!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0)
-        ||!DBService.dakimakuras.Any(x=>x.Price <=current_price))
+        ||!DBService.dakimakuras.Any(x=>x.Price <=current_price)
+        ||(!DBService.dakimakuras.Any(x=>x.Category.ID ==selectedCategory)&&selectedCategory!=0))
         {
             <div class="assortment-container-stretched">Sorry! Nothing has been found by your request!</div>
         }
@@ -60,7 +58,7 @@
         {
             foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
             {
-                @if(item.Price<= current_price) 
+                @if(item.Price<= current_price && (item.Category.ID.Equals(selectedCategory)||selectedCategory==0)) 
                 {
                     <element @onclick="myScript" class="card">
                         <div>
@@ -94,7 +92,7 @@
     int selectedCategory = 0;
 
     int max_price = 10000;
-    int current_price = 0;
+    int current_price = 10000;
     int step = 10;
 
     private void myScript()

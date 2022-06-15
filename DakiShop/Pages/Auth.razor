@@ -1,0 +1,67 @@
+﻿
+@page "/authentication"
+@using DakiShop.Logic
+@using DakiShop.Models
+@inject Blazored.LocalStorage.ILocalStorageService session;
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Auth</PageTitle>
+
+
+	
+
+<div class="user">
+    <header class="user__header">
+        <h1 class="user__title">@(isRegistration? "Registration" : "Log In Account")</h1>
+    </header>
+    
+    <form class="form">
+        <div class="form__group">
+            <input type="text" @bind-value="login" placeholder="Username" class="form__input" />
+        </div>
+        @if (isRegistration) {
+            <div class="form__group">
+                <input type="email" @bind-value="email" placeholder="Email" class="form__input" />
+            </div>
+        }
+        
+        <div class="form__group">
+            <input type="password" @bind-value="pass" placeholder="Password" class="form__input" />
+        </div>
+
+        @if (isRegistration) {
+            <div class="form__group">
+                <input type="password" @bind-value="passRepeat" placeholder="Repeat Password" class="form__input" />
+            </div>
+        }
+        <button class="btn" @onclick="Authen" type="button">@(isRegistration? "Register" : "LogIn")</button>
+       
+    </form>
+     <form class="form">
+        
+     <button class="btn" @onclick="ChangeLogIn" type="button">@(isRegistration? "Already have an account?" : "Do not have account yet?")</button>
+      </form>
+
+</div>
+
+@code{
+    bool isRegistration = false;
+    string pass = string.Empty;
+    string passRepeat = string.Empty;
+    string login = string.Empty;
+    string email = string.Empty;
+    private void ChangeLogIn()
+    {
+        isRegistration = !isRegistration;
+        pass = string.Empty;
+        passRepeat = string.Empty;
+        login = string.Empty;
+        email = string.Empty;
+    }
+
+    private void Authen()
+    {
+        
+    }
+
+}

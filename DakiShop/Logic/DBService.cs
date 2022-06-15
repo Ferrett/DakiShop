@@ -14,19 +14,19 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void AddDakimakuraToDB()
+        public static void AddDakimakuraToDB(int categoryID, string imagePath, string name, int price, string size, int fillerID, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
                 db.Dakimakura.Add(new Dakimakura
                 {
-                    Category = db.Category.FirstOrDefault(x=>x.ID==1)!,
-                    ImagePath = @"https://dakisource.s3.eu-north-1.amazonaws.com/266947368.jpg",
-                    Name = "Капiтан Зеленський",
-                    Price = 1000,
-                    Size = "170x60",
-                    Filler = db.Filler.FirstOrDefault(x => x.ID == 1)!,
-                    Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == 4)!,
+                    Category = db.Category.FirstOrDefault(x=>x.ID==categoryID)!,
+                    ImagePath =imagePath ,
+                    Name = name,
+                    Price = price,
+                    Size = size,
+                    Filler = db.Filler.FirstOrDefault(x => x.ID == fillerID)!,
+                    Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID ==manufacturerID )!,
                     Rating = 0
                 });
                 db.SaveChanges();
@@ -64,6 +64,54 @@ namespace DakiShop.Logic
                 dakimakuras = db.Dakimakura.ToList();
                 categories = db.Category.ToList();
             }
+        }
+
+        public static void AddNewUserToDB(string login, string email, string password)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Client.Add(new Client { Login = login.ToLower(), Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false });
+                db.SaveChanges();
+            }
+        }
+        public static bool IsUserExists(string login)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Client.ToList().Any(x => x.Login == login.ToLower()))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool UserLogIn(string login, string password)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Client.ToList().Any(x => x.Login == login.ToLower() && BCrypt.Net.BCrypt.Verify(password, x.PasswordHash)))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsLoginTaken(string login)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Client.ToList().Any(x => x.Login == login))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsEmailTaken(string email)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Client.ToList().Any(x => x.Email == email))
+                    return true;
+            }
+            return false;
         }
     }
 }
