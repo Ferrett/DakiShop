@@ -22,7 +22,7 @@ AWSManager.SecretKey = Config.configuration.GetSection("AWSKeys")["SecretKey"];
 DBService.InitDB();
 //DBService.AddDakimakuraToDB();
 
-DBService.GetDakimakurasFromDB();
+DBService.GetDataFromDB();
 
 //AWSManager.UploadFile(File.Open(@"C:\Users\User\Desktop\photo_2022-05-26_12-34-43.jpg", FileMode.Open), "dakisource", "new amogus2");
 

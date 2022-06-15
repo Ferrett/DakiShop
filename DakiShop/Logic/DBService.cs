@@ -5,7 +5,7 @@ namespace DakiShop.Logic
     public static class DBService
     {
         public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
-
+        public static List<Category> categories { get; set; } = new List<Category>();
         public static void InitDB()
         {
             using (DBContext db = new DBContext())
@@ -57,11 +57,12 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void GetDakimakurasFromDB()
+        public static void GetDataFromDB()
         {
             using(DBContext db = new DBContext())
             {
                 dakimakuras = db.Dakimakura.ToList();
+                categories = db.Category.ToList();
             }
         }
     }
