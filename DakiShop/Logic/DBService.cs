@@ -33,6 +33,22 @@ namespace DakiShop.Logic
             }
         }
 
+        public static void AddRootUser(string login, string email, string password)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Client.Add(new Client { Login = login.ToLower(), Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = true });
+                db.SaveChanges();
+            }
+        }
+
+        public static bool GetCurrentUserRoot(string login)
+        {
+            using (DBContext db = new DBContext())
+            {
+                return db.Client.ToList().Find(x => x.Login.Equals(login))!.IsAdmin;
+            } 
+        }
         public static Category GetCategoryByName(string name)
         {
             using (DBContext db = new DBContext())

@@ -68,7 +68,19 @@ body {
     background: darken(#fff, 3%);
 }
 
+.error-auth-text {
+    margin-top: 20px;
+    font-family: 'Circe-B';
+    font-size: 24px;
+    color: #F63144;
+}
 
+.error-auth-text-nice {
+    margin-top: 20px;
+    font-family: 'Circe-B';
+    font-size: 24px;
+    color: #6DFF74;
+}
 
 .btn {
     border: 5px outset #0070AD;

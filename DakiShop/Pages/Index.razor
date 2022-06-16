@@ -95,43 +95,17 @@
     int current_price = 10000;
     int step = 10;
 
-    private void myScript()
+    public void myScript()
     {
-
+        
     }
-
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("setIcon");      
+            //UpdateLogIn();
+            await JSRuntime.InvokeVoidAsync("setIcon");  
         }
     }    
-
-    //  Session
-    //#region Session
-    //    string UserName = "Guest";
-    //string FilePath = string.Empty;
-    //public async void SaveSession()
-    //{
-    //    UserName = "Nigger";
-    //    await session.SetItemAsync("UserName", "Nigger");
-    //}
-    //public async void ClearSession()
-    //{
-    //    UserName = "Guest";
-    //    await session.ClearAsync();
-    //}
-
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if(firstRender)
-    //    {
-    //        string a = await session.GetItemAsync<string>("UserName");
-    //        UserName = a == null? "Guest":a;
-    //        StateHasChanged();
-    //    }
-    //}
-    //#endregion
 }

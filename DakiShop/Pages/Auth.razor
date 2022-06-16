@@ -2,13 +2,14 @@
 @page "/authentication"
 @using DakiShop.Logic
 @using DakiShop.Models
+@using RaportBlazorServer.Logic
 @inject Blazored.LocalStorage.ILocalStorageService session;
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject AppState AppState
 
 <PageTitle>Auth</PageTitle>
 
-
-	
 
 <div class="user">
     <header class="user__header">
@@ -16,7 +17,7 @@
     </header>
     
     <form class="form">
-        <div class="form__group">
+        <div class="form__group" style="background-color:red">
             <input type="text" @bind-value="login" placeholder="Username" class="form__input" />
         </div>
         @if (isRegistration) {
@@ -34,13 +35,15 @@
                 <input type="password" @bind-value="passRepeat" placeholder="Repeat Password" class="form__input" />
             </div>
         }
-        <button class="btn" @onclick="Authen" type="button">@(isRegistration? "Register" : "LogIn")</button>
+        <button class="btn" @onclick="RegisterNewUser" type="button">@(isRegistration? "Register" : "LogIn")</button>
        
     </form>
-     <form class="form">
-        
-     <button class="btn" @onclick="ChangeLogIn" type="button">@(isRegistration? "Already have an account?" : "Do not have account yet?")</button>
-      </form>
+        <div class=@regStyle>
+         <a >@registrationErrorText</a>
+        </div>
+    <form class="form">
+        <button class="btn" @onclick="ChangeLogIn" type="button">@(isRegistration? "Already have an account?" : "Do not have account yet?")</button>
+    </form>
 
 </div>
 
@@ -50,6 +53,9 @@
     string passRepeat = string.Empty;
     string login = string.Empty;
     string email = string.Empty;
+    string registrationErrorText = string.Empty;
+
+    string regStyle = "error-auth-text";
     private void ChangeLogIn()
     {
         isRegistration = !isRegistration;
@@ -57,11 +63,38 @@
         passRepeat = string.Empty;
         login = string.Empty;
         email = string.Empty;
+        registrationErrorText = string.Empty;
     }
 
-    private void Authen()
+    private bool UserValidation()
     {
-        
+        var responce = isRegistration ? Validation.ValidateRegistration(login, email, pass, passRepeat) : Validation.ValidateLogIn(login, pass);
+        registrationErrorText = responce.Item2;
+        regStyle = responce.Item1 ? "error-auth-text-nice" : "error-auth-text";
+        if (!responce.Item1)
+            return false;
+
+        return true;
     }
 
+    private void RegisterNewUser()
+    {
+        if (UserValidation())
+        {
+            if(isRegistration)
+                DBService.AddNewUserToDB(login, email, pass);
+
+            SaveSession();
+            NavManager.NavigateTo("/");
+        }
+    }
+
+    public async void SaveSession()
+    {
+        await session.SetItemAsync("UserName",login);
+        await session.SetItemAsync("UserRoot",DBService.GetCurrentUserRoot(login));
+
+        AppState.UserRoot = DBService.GetCurrentUserRoot(login);
+        AppState.UserName = login;
+    }
 }

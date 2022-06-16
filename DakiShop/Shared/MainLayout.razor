@@ -1,5 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using DakiShop.Logic
+@inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService session;
+@inject AppState AppState
+@implements IDisposable
 
 <PageTitle>DakiShop</PageTitle>
 
@@ -21,7 +24,7 @@
                     <button class="common-button">Buy Dakimakura</button>
                 </NavLink>
 
-                @if (isAdmin)
+                @if (AppState.UserRoot)
                 {
                     <NavLink href="/admin">
                         <button class="common-button last-button">Admin Panel</button>
@@ -36,7 +39,7 @@
                 </NavLink>
 
                 <NavLink href="/authentication">
-                    <button class="registration-button">@LoginButtonText</button>
+                    <button class="registration-button">@AppState.UserName</button>
                 </NavLink>
             </div>
 
@@ -50,19 +53,43 @@
 
 
 @code{
-    string LoginButtonText = "Login";
 
-    bool isAdmin = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            string name = await session.GetItemAsync<string>("UserName");
-            LoginButtonText = name == null? "Login":name;
-
-            StateHasChanged();
+            UpdateLogIn();
         }
     }
 
+     //  Session
+    #region Session
+
+    public async void ClearSession()
+    {
+         await session.ClearAsync();
+    }
+
+    public async void UpdateLogIn()
+    {
+         var name = await session.GetItemAsync<string>("UserName");
+         AppState.UserName = name == null? "Login":name;
+         var root = await session.GetItemAsync<bool>("UserRoot");
+         AppState.UserRoot = root;
+         StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+    #endregion
+
+   
 }
