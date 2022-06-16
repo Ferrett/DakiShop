@@ -9,9 +9,9 @@
 
 
  <script>
-    setIcon = () => {var slider = document.getElementById("myRange");
+    setPriceScroll = (max_value) => {var slider = document.getElementById("myRange");
     slider.addEventListener("input", function () {
-    var x = slider.value/100;
+    var x = slider.value/(max_value/100);
     var color = 'linear-gradient(90deg, rgb(117,252,117)' + x + '%,rgb(214,214,214)' + x + '%)';
     slider.style.background = color;
 })};

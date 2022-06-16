@@ -129,5 +129,19 @@ namespace DakiShop.Logic
             }
             return false;
         }
+
+        public static int GetMaxPriceInCategory(int categoryID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if(categoryID ==0)
+                    return db.Dakimakura.ToList().MaxBy(x => x.Price).Price;
+
+                if (db.Dakimakura.Where(x => x.Category.ID == categoryID).Count() == 0)
+                    return 0;
+
+                return db.Dakimakura.Where(x => x.Category.ID == categoryID).ToList().MaxBy(x => x.Price).Price;
+            }
+        }
     }
 }

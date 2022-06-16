@@ -7,10 +7,6 @@
 <PageTitle>DakiShop</PageTitle>
 
 <div class="page">
-    @* <div class="sidebar">
-        <NavMenu />
-        </div>*@
-
     <main>
         <div class="header">
             <div>
@@ -53,13 +49,16 @@
 
 
 @code{
-
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            UpdateLogIn();
+            //await session.ClearAsync();
+            var name = await session.GetItemAsync<string>("UserName");
+            AppState.UserName = name == null? "Login":name;
+            var root = await session.GetItemAsync<bool>("UserRoot");
+            AppState.UserRoot = root;
+            StateHasChanged();
         }
     }
 
@@ -71,14 +70,6 @@
          await session.ClearAsync();
     }
 
-    public async void UpdateLogIn()
-    {
-         var name = await session.GetItemAsync<string>("UserName");
-         AppState.UserName = name == null? "Login":name;
-         var root = await session.GetItemAsync<bool>("UserRoot");
-         AppState.UserRoot = root;
-         StateHasChanged();
-    }
 
     protected override void OnInitialized()
     {
