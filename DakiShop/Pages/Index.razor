@@ -3,6 +3,8 @@
 @using DakiShop.Models
 @inject Blazored.LocalStorage.ILocalStorageService session;
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject AppState AppState
 
 <PageTitle>Store</PageTitle>
 
@@ -24,8 +26,8 @@
                 <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput"/>
             </div>
             <div class="scroll-field">
-                <span class="scroll-label" >Max Price: @current_price ₴</span>
-                <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@current_price" @bind:event="oninput">
+                <span class="scroll-label" >Max Price: @CurrentPrice ₴</span>
+                <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@CurrentPrice" @bind:event="oninput">
             </div>
            
             <div class="category-field">
@@ -47,9 +49,10 @@
 <div class="stretched">
     <div class="assortment-container">
         @if (DBService.dakimakuras.Count == 0 
-        || (!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0)
-        ||(!DBService.dakimakuras.Where(x=>x.Category.ID == CategoryID).Any(x=>x.Price <=current_price)&&CategoryID!=0)
-        ||(!DBService.dakimakuras.Any(x=>x.Category.ID ==CategoryID)&&CategoryID!=0))
+        ||(!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0)
+        ||(!DBService.dakimakuras.Where(x=>x.Category.ID == CategoryID).Any(x=>x.Price <=CurrentPrice)&&CategoryID!=0)
+        ||(!DBService.dakimakuras.Any(x=>x.Category.ID ==CategoryID)&&CategoryID!=0)
+        ||(!DBService.dakimakuras.Any(x=>x.Price <=CurrentPrice)&&CategoryID==0))
         {
             <div class="assortment-container-stretched">Sorry! Nothing has been found by your request!</div>
         }
@@ -57,9 +60,9 @@
         {
             foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
             {
-                @if(item.Price<= current_price && (item.Category.ID.Equals(CategoryID)||CategoryID==0)) 
+                @if(item.Price<= CurrentPrice && (item.Category.ID.Equals(CategoryID)||CategoryID==0)) 
                 {
-                    <element @onclick="myScript" class="card">
+                    <element  @onclick="(() => RedirectToItem(item.ID))" class="card">
                         <div>
                         <img class="card-img" src=@item.ImagePath>
                     </div>
@@ -68,8 +71,8 @@
          
                         <div class="card-info">
                             <div class="card-price">@item.Price ₴</div>
-                            <img class="card-rating-image" src="/css/resourses/star.png">
-                            <div class="card-rating-score">@item.Rating</div>
+                            <svg class="card-rating-image"fill="orange" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
+                            <div class="card-rating-score">@(item.Rating==0?"---":item.Rating)</div>
                         </div>
                     </div>
                     </element>
@@ -87,8 +90,20 @@
 
 
     int max_price = 0;
-    int current_price = 0;
     int step = 10;
+
+    int _currentPrice = 0;
+    private int CurrentPrice
+    {
+        get
+        {
+            return _currentPrice;
+        }
+        set
+        {
+            _currentPrice = value;
+        }
+    }
 
     private int _categoryID  = 0;
     private int CategoryID
@@ -101,28 +116,35 @@
         {
             _categoryID = value;
             UpdatePriceScrollValues();
-            //run your process here to handle dropdown changes
         }
     }
 
-    public void myScript()
-    {
 
+    public void RedirectToItem(int itemID)
+    {
+        NavManager.NavigateTo("/Dakimakura/"+ itemID.ToString());
     }
 
     private async void UpdatePriceScrollValues()
     {
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
-        current_price = max_price;
-        await JSRuntime.InvokeVoidAsync("setPriceScroll",max_price);  
+        CurrentPrice = max_price;
+        await JSRuntime.InvokeVoidAsync("updScroll");
+        await JSRuntime.InvokeVoidAsync("setPriceScroll",max_price);
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        max_price = DBService.GetMaxPriceInCategory(CategoryID);
+        CurrentPrice = max_price;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-            UpdatePriceScrollValues();
-            
+            await JSRuntime.InvokeVoidAsync("setPriceScroll",max_price);
             StateHasChanged();
         }
     }    

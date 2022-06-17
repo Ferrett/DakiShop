@@ -3,6 +3,7 @@
 @inject Blazored.LocalStorage.ILocalStorageService session;
 @inject AppState AppState
 @implements IDisposable
+@using DakiShop.Pages
 
 <PageTitle>DakiShop</PageTitle>
 
@@ -22,7 +23,7 @@
 
                 @if (AppState.UserRoot)
                 {
-                    <NavLink href="/admin">
+                    <NavLink href="/adminpanel">
                         <button class="common-button last-button">Admin Panel</button>
                     </NavLink>
                 }
@@ -49,18 +50,6 @@
 
 
 @code{
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(firstRender)
-        {
-            //await session.ClearAsync();
-            var name = await session.GetItemAsync<string>("UserName");
-            AppState.UserName = name == null? "Login":name;
-            var root = await session.GetItemAsync<bool>("UserRoot");
-            AppState.UserRoot = root;
-            StateHasChanged();
-        }
-    }
 
      //  Session
     #region Session
@@ -71,9 +60,13 @@
     }
 
 
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
         AppState.OnChange += StateHasChanged;
+        var name = await session.GetItemAsync<string>("UserName");
+        AppState.UserName = name == null? "Login":name;
+        var root = await session.GetItemAsync<bool>("UserRoot");
+        AppState.UserRoot = root;
     }
 
     public void Dispose()

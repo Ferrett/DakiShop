@@ -14,7 +14,7 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void AddDakimakuraToDB(int categoryID, string imagePath, string name, int price, string size, int fillerID, int manufacturerID)
+        public static void AddDakimakuraToDB(int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
@@ -25,8 +25,9 @@ namespace DakiShop.Logic
                     Name = name,
                     Price = price,
                     Size = size,
-                    Filler = db.Filler.FirstOrDefault(x => x.ID == fillerID)!,
+                    Filler = filler,
                     Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID ==manufacturerID )!,
+                    PurchasedNumber = 0,
                     Rating = 0
                 });
                 db.SaveChanges();
@@ -57,14 +58,6 @@ namespace DakiShop.Logic
             }
         }
 
-        public static Filler GetFillerByName(string name)
-        {
-            using (DBContext db = new DBContext())
-            {
-                return db.Filler.ToList().Find(x => x.Name.Equals(name))!;
-            }
-        }
-
         public static Manufacturer GetManufacturerByName(string name)
         {
             using (DBContext db = new DBContext())
@@ -73,7 +66,7 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void GetDataFromDB()
+        public static void UpdateDataFromDB()
         {
             using(DBContext db = new DBContext())
             {
@@ -141,6 +134,24 @@ namespace DakiShop.Logic
                     return 0;
 
                 return db.Dakimakura.Where(x => x.Category.ID == categoryID).ToList().MaxBy(x => x.Price).Price;
+            }
+        }
+
+        public static bool IsCategoryExists(string name)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Category.ToList().Any(x => x.Name.ToLower().Equals(name.ToLower())))
+                    return true;
+            }
+            return false;
+        }
+        public static void AddCategory(string name)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Category.Add(new Category { Name = name});
+                db.SaveChanges();
             }
         }
     }

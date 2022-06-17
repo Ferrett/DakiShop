@@ -7,7 +7,6 @@ namespace DakiShop.Logic
     {
         public DbSet<Category> Category { get; set; } = null!;
         public DbSet<Manufacturer> Manufacturer { get; set; } = null!;
-        public DbSet<Filler> Filler { get; set; } = null!;
         public DbSet<Client> Client { get; set; } = null!;
         public DbSet<Dakimakura> Dakimakura { get; set; } = null!;
         public DbSet<Review> Review { get; set; } = null!;

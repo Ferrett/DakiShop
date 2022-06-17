@@ -8,11 +8,20 @@
 <component type="typeof(App)" render-mode="Server" />
 
 
- <script>
+<script>
     setPriceScroll = (max_value) => {var slider = document.getElementById("myRange");
     slider.addEventListener("input", function () {
     var x = slider.value/(max_value/100);
     var color = 'linear-gradient(90deg, rgb(117,252,117)' + x + '%,rgb(214,214,214)' + x + '%)';
     slider.style.background = color;
 })};
+</script>
+
+
+<script>   
+updScroll = () => {
+    var slider = document.getElementById("myRange");
+    var color = 'linear-gradient(90deg, rgb(117,252,117)' + 100 + '%,rgb(214,214,214)' + 100 + '%)';
+    slider.style.background = color;
+};
 </script>

@@ -32,7 +32,8 @@
 .search-field {
     width: 33%;
     margin-right: 20px;
-    margin-left:150px;
+    margin-left: 150px;
+    
 }
 
 .search-label {
@@ -42,6 +43,7 @@
     background-color: white;
     position: relative;
     z-index: 2;
+
 }
 
 .input-field {
@@ -55,6 +57,7 @@
     color: #3e5262;
     position: relative;
     z-index: 1;
+
 }
 
 .categories-field {
@@ -127,14 +130,15 @@
     padding: 10px;
     margin: 0 0.5% 4% 0.5%;
     transition: 0.3s ease;
-    min-height: 480px;
+    min-height: 420px;
+    cursor: pointer;
 }
 
-    .card:hover {
-        box-shadow: 0 0 30px 10px rgba(0,0,0,0.1);
-        transform: scale(1.04);
-        transition: 0.3s ease;
-    }
+.card:hover {
+    box-shadow: 0 0 30px 10px rgba(0,0,0,0.1);
+    transform: scale(1.04);
+    transition: 0.3s ease;
+}
 
 .card-img {
     width: 100%;
@@ -157,7 +161,7 @@
 .card-price {
     color: black;
     font-family: 'Circe-B';
-    font-size: 15px;
+    font-size: 10px;
     margin-bottom: 5px;
     margin-left: 25px;
     margin-right: 25px;
@@ -167,7 +171,7 @@
     width: 35px;
     height: 35px;
     margin-top: 9px;
-    margin-left: 60px;
+    margin-left: 40px;
 }
 
 .card-rating-score {

@@ -1,0 +1,116 @@
+﻿@using DakiShop.Logic
+@using RaportBlazorServer.Logic
+
+@inject AppState AppState
+
+
+@page "/adminpanel"
+@if(AppState.UserRoot)
+{
+     <button class="btnAA"@onclick="(() => Show(1))">Добавить Дакимакуру</button>
+     <button class="btnAA"@onclick="(() => Show(2))">Добавить Категорию</button>
+     <button class="btnAA"@onclick="(() => Show(3))">Добавить Производителя</button>
+    
+     <button class="btnB"@onclick="(() => Show(4))">Удалить Дакимакуру</button>
+     <button class="btnB"@onclick="(() => Show(5))">Удалить Категорию</button>
+     <button class="btnB"@onclick="(() => Show(6))">Удалить Производителя</button>
+
+     <button class="btnC"@onclick="(() => Show(7))">Изменить Дакимакуру</button>
+}
+else
+{
+    <h2>ПОШЁЛ НАХУЙ ДОЛБАЁБ</h2>
+}
+
+<AdminPanelForm @ref="popupWindow" OnPurchase="Submit">
+     <div class="simple-form">
+        @if(ID == 2){
+            <div class="form-group">
+                <label class="confirmation-text">Category Name</label>
+                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name"style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+            </div>
+        }
+
+        <div class="form-group">
+            <div class="error-auth-text">
+                <a >@ErrorText</a>
+            </div>
+        </div>
+
+        <button @onclick="Submit" class="btnXA" >Submit</button>
+        <button @onclick="Close" class="btnXB">Cancel</button>
+            
+    </div>
+</AdminPanelForm>
+
+@code {
+    AdminPanelForm popupWindow;
+
+    string FirstName = string.Empty;
+    string LastName = string.Empty;
+    string CategotyName = string.Empty;
+    string ManufacturerName = string.Empty;
+    string ErrorText = string.Empty;
+    int ID = 0;
+
+
+    //Добавить Дакимакуру      1
+    //Добавить Категорию       2
+    //Добавить Производителя   3
+    //Удалить Дакимакуру       4
+    //Удалить Категорию        5
+    //Удалить Производителя    6
+    //Изменить Дакимакуру      7
+
+    private void Show(int id)
+    {
+        ID = id;
+        popupWindow.Show();
+    }
+
+    private void Submit()
+    {
+        if(ID == 1)
+        {
+
+        }
+        else if(ID == 2)
+        {
+            var responce = Validation.ValidateNewCategory(CategotyName);
+            ErrorText = responce.Item2;
+
+            if (!responce.Item1)
+                return;
+
+            DBService.AddCategory(CategotyName);
+            DBService.UpdateDataFromDB();
+            popupWindow.Hide();
+        }
+        else if(ID == 3)
+        {
+
+        }
+        else if(ID == 4)
+        {
+
+        }
+        else if(ID == 5)
+        {
+
+        }
+        else if(ID == 6)
+        {
+
+        }
+        else
+        {
+            
+        }
+        
+    }
+
+    private void Close()
+    {
+        popupWindow.Hide();
+    }
+}

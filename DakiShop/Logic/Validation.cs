@@ -64,5 +64,16 @@ namespace RaportBlazorServer.Logic
 		{
 			return new EmailAddressAttribute().IsValid(email) ? true : false;
 		}
+
+		public static Tuple<bool, string> ValidateNewCategory(string name)
+        {
+			if (string.IsNullOrWhiteSpace(name))
+				return Tuple.Create(false, "Некорректное название");
+
+			if (DBService.IsCategoryExists(name))
+				return Tuple.Create(false, "Категория с таким названием уже есть");
+
+			return Tuple.Create(true, "Категория добавлена успешно");
+		}
 	}
 }

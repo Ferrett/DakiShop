@@ -35,14 +35,14 @@
                 <input type="password" @bind-value="passRepeat" placeholder="Repeat Password" class="form__input" />
             </div>
         }
-        <button class="btn" @onclick="RegisterNewUser" type="button">@(isRegistration? "Register" : "LogIn")</button>
+        <button class="btnA" @onclick="RegisterNewUser" type="button">@(isRegistration? "Register" : "LogIn")</button>
        
     </form>
         <div class=@regStyle>
          <a >@registrationErrorText</a>
         </div>
     <form class="form">
-        <button class="btn" @onclick="ChangeLogIn" type="button">@(isRegistration? "Already have an account?" : "Do not have account yet?")</button>
+        <button class="btnA" @onclick="ChangeLogIn" type="button">@(isRegistration? "Already have an account?" : "Do not have account yet?")</button>
     </form>
 
 </div>

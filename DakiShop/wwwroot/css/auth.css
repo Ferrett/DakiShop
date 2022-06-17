@@ -11,7 +11,6 @@ body {
     animation: move 30s ease infinite;
     transform: translate3d(0, 0, 0);
     background: linear-gradient(45deg, #49D49D 10%, #A2C7E5 90%);
-/*    min-height: 1080px;*/
     min-height: 100vh;
 }
 
@@ -82,7 +81,7 @@ body {
     color: #6DFF74;
 }
 
-.btn {
+.btnA {
     border: 5px outset #0070AD;
     display: block;
     width: 100%;
@@ -95,10 +94,9 @@ body {
     background: #0070AD;
     transition: 0.3s;
 }
-.btn:hover
-{
-    background: cyan;
-}
+    .btnA:hover {
+        background: cyan;
+    }
 
 
 

@@ -1,0 +1,106 @@
+﻿.btnAA {
+    border: 5px outset #0070AD;
+    width: 70%;
+    padding: 20px;
+    font-family: 'Circe-R';
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: #0070AD;
+    transition: 0.3s;
+    margin-top: 20px;
+    align-content: center;
+}
+
+    .btnAA:hover {
+        background: cyan;
+        color: black;
+    }
+
+.btnB {
+    border: 5px outset #F75352;
+    width: 70%;
+    padding: 20px;
+    font-family: 'Circe-R';
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: #F75352;
+    transition: 0.3s;
+    margin-top: 20px;
+    align-content: center;
+}
+
+    .btnB:hover {
+        background: cyan;
+        color: black;
+    }
+
+.btnC {
+    border: 5px outset #FFA700;
+    width: 70%;
+    padding: 20px;
+    font-family: 'Circe-R';
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: #FFA700;
+    transition: 0.3s;
+    margin-top: 20px;
+    align-content: center;
+}
+
+    .btnC:hover {
+        background: cyan;
+        color: black;
+    }
+
+.confirmation-text {
+    font-size: 20px;
+    font-family: 'Circe-R';
+    margin-bottom: 10px;
+}
+
+.btnXA {
+    border: 5px outset #0070AD;
+    width: 40%;
+    padding: 20px;
+    font-family: 'Circe-R';
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: #0070AD;
+    transition: 0.3s;
+    margin-top: 30px;
+    align-content: center;
+    margin-right: 40px;
+
+}
+
+.btnXB {
+    border: 5px outset #F75352;
+    width: 40%;
+    padding: 20px;
+    font-family: 'Circe-R';
+    -webkit-appearance: none;
+    outline: 0;
+    border: 0;
+    color: white;
+    background: #F75352;
+    transition: 0.3s;
+    margin-top: 30px;
+    align-content: center;
+    margin-left:40px;
+}
+.btnXA:hover {
+    background: cyan;
+    color: black;
+}
+.btnXB:hover {
+    background: cyan;
+    color: black;
+}
