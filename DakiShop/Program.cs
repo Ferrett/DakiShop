@@ -18,15 +18,17 @@ builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddSingleton<AppState>();
 
+
+
 AWSManager.UserKey = Config.configuration.GetSection("AWSKeys")["UserKey"];
 AWSManager.SecretKey = Config.configuration.GetSection("AWSKeys")["SecretKey"];
 
 //DBService.InitDB();
 //DBService.AddRootUser("admin","vovkaprikhod@gmail.com","11111111");
 
-//DBService.AddDakimakuraToDB(1, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947368.jpg", "Капiтан Зеленський",5000, "170x60", "Sintepon", 4);
-//DBService.AddDakimakuraToDB(3, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947307.jpg", "Бiллi Херiнгтон",14000, "195x80", "Sintepon", 2);
-DBService.UpdateDataFromDB();
+//DBService.AddDakimakura(1, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947368.jpg", "Капiтан Зеленський",5000, "170x60", "Sintepon", 4);
+//DBService.AddDakimakura(3, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947307.jpg", "Бiллi Херiнгтон",14000, "195x80", "Sintepon", 2);
+DBService.UpdateData();
 
 //AWSManager.UploadFile(File.Open(@"C:\Users\User\Desktop\photo_2022-05-26_12-34-43.jpg", FileMode.Open), "dakisource", "new amogus2");
 

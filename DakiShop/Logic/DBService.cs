@@ -4,8 +4,9 @@ namespace DakiShop.Logic
 {
     public static class DBService
     {
-        public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
-        public static List<Category> categories { get; set; } = new List<Category>();
+        //public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
+        //public static List<Category> categories { get; set; } = new List<Category>();
+        //public static List<Manufacturer> manufacturers { get; set; } = new List<Manufacturer>();
         public static void InitDB()
         {
             using (DBContext db = new DBContext())
@@ -14,7 +15,7 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void AddDakimakuraToDB(int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
+        public static void AddDakimakura(int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
@@ -66,16 +67,17 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void UpdateDataFromDB()
+        public static void UpdateData()
         {
             using(DBContext db = new DBContext())
             {
                 dakimakuras = db.Dakimakura.ToList();
                 categories = db.Category.ToList();
+                manufacturers = db.Manufacturer.ToList();
             }
         }
 
-        public static void AddNewUserToDB(string login, string email, string password)
+        public static void AddNewUser(string login, string email, string password)
         {
             using (DBContext db = new DBContext())
             {
@@ -154,5 +156,32 @@ namespace DakiShop.Logic
                 db.SaveChanges();
             }
         }
+
+        public static bool IsManufacturerExists(string name)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Manufacturer.ToList().Any(x => x.Name.ToLower().Equals(name.ToLower())))
+                    return true;
+            }
+            return false;
+        }
+        public static void AddManufacturer(string name)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Manufacturer.Add(new Manufacturer { Name = name });
+                db.SaveChanges();
+            }
+        }
+
+        //public static Dakimakura GetDakimakuraByID(int id)
+        //{
+        //    using (DBContext db = new DBContext())
+        //    {
+        //       return db.Manufacturer.Add(new Manufacturer { Name = name });
+               
+        //    }
+        //}
     }
 }

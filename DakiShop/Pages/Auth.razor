@@ -1,12 +1,13 @@
-﻿
-@page "/authentication"
+﻿@page "/authentication"
 @using DakiShop.Logic
 @using DakiShop.Models
 @using RaportBlazorServer.Logic
-@inject Blazored.LocalStorage.ILocalStorageService session;
+@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject Blazored.SessionStorage.ISessionStorageService sessionS;
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 @inject AppState AppState
+
 
 <PageTitle>Auth</PageTitle>
 
@@ -82,7 +83,7 @@
         if (UserValidation())
         {
             if(isRegistration)
-                DBService.AddNewUserToDB(login, email, pass);
+                DBService.AddNewUser(login, email, pass);
 
             SaveSession();
             NavManager.NavigateTo("/");
@@ -91,10 +92,11 @@
 
     public async void SaveSession()
     {
-        await session.SetItemAsync("UserName",login);
-        await session.SetItemAsync("UserRoot",DBService.GetCurrentUserRoot(login));
+        await sessionL.SetItemAsync("name2",login);
+        await sessionL.SetItemAsync("root2",DBService.GetCurrentUserRoot(login)==false?"false":"true");
 
         AppState.UserRoot = DBService.GetCurrentUserRoot(login);
         AppState.UserName = login;
+        StateHasChanged();
     }
 }

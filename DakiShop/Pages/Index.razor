@@ -1,7 +1,9 @@
 ﻿@page "/"
 @using DakiShop.Logic
 @using DakiShop.Models
-@inject Blazored.LocalStorage.ILocalStorageService session;
+@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject Blazored.SessionStorage.ISessionStorageService sessionS;
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 @inject AppState AppState
@@ -9,15 +11,11 @@
 <PageTitle>Store</PageTitle>
 
 @*<input @bind-value="FilePath" type="file"/>
-<a>@FilePath </a>
-<NavLink href="/Dakimakura/1">
+<a>@FilePath </a>*@
+@*<NavLink href="/Dakimakura/1">
    <br> <button>Dakimakura</button> <br>
-</NavLink>
-<br><br><br><br>
-<label> Welcome, @UserName </label>
-<br>
-<button class="btn btn-success" @onclick="SaveSession"> LogIn </button>
-<button class="btn btn-success" @onclick="ClearSession"> LogOut </button>*@
+</NavLink>*@
+
 
 <div class="site-holder">
     <div class="main-container">
@@ -86,8 +84,8 @@
 
 
 @code{
+    string FilePath = string.Empty;
     string searchQuery =string.Empty;
-
 
     int max_price = 0;
     int step = 10;

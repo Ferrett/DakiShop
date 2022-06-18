@@ -1,21 +1,23 @@
 ﻿@using DakiShop.Logic
 @using RaportBlazorServer.Logic
+@using System.Reflection
+
 
 @inject AppState AppState
 
 
 @page "/adminpanel"
-@if(AppState.UserRoot)
+@if (AppState.UserRoot)
 {
-     <button class="btnAA"@onclick="(() => Show(1))">Добавить Дакимакуру</button>
-     <button class="btnAA"@onclick="(() => Show(2))">Добавить Категорию</button>
-     <button class="btnAA"@onclick="(() => Show(3))">Добавить Производителя</button>
-    
-     <button class="btnB"@onclick="(() => Show(4))">Удалить Дакимакуру</button>
-     <button class="btnB"@onclick="(() => Show(5))">Удалить Категорию</button>
-     <button class="btnB"@onclick="(() => Show(6))">Удалить Производителя</button>
+    <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
+    <button class="btnAA" @onclick="(() => Show(2))">Добавить Категорию</button>
+    <button class="btnAA" @onclick="(() => Show(3))">Добавить Производителя</button>
 
-     <button class="btnC"@onclick="(() => Show(7))">Изменить Дакимакуру</button>
+    <button class="btnB" @onclick="(() => Show(4))">Удалить Дакимакуру</button>
+    <button class="btnB" @onclick="(() => Show(5))">Удалить Категорию</button>
+    <button class="btnB" @onclick="(() => Show(6))">Удалить Производителя</button>
+
+    <button class="btnC" @onclick="(() => Show(7))">Изменить Дакимакуру</button>
 }
 else
 {
@@ -23,37 +25,231 @@ else
 }
 
 <AdminPanelForm @ref="popupWindow" OnPurchase="Submit">
-     <div class="simple-form">
-        @if(ID == 2){
-            <div class="form-group">
-                <label class="confirmation-text">Category Name</label>
-                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name"style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+    <div class="simple-form">
+        @if (ID == 1)
+        {
+            <div class="form-group" >
+                <label class="confirmation-text-h">Add Dakimakura</label><hr style="margin-bottom:30px;">
+
+                <div style="display:flex;justify-content:space-between;">
+                    <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
+                    <input @bind-value="DakiImagePath" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    @if (FileUploadedToBucket == true)
+                    {
+                        <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
+                    }
+                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                    {
+                        <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                    }
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                    <div class="select">
+                        <select @bind="CategoryID" id="format">
+                            @foreach (var item in DBService.categories)
+                            {
+                                <option value=@(item.ID-1)>@item.Name</option>
+                            }
+                          
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
+                    <div class="select">
+                        <select @bind="ManufacturerID" id="format">
+                            @foreach (var item in DBService.manufacturers)
+                            {
+                                <option value=@(item.ID-1)>@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:25px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Name</label>
+                    <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Price</label>
+                    <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Filler</label>
+                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
+                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
             </div>
         }
+        @if (ID == 2)
+        {
+            <div class="form-group">
+                <label class="confirmation-text-h">Add Category</label><hr style="margin-bottom:30px;">
+                <label class="confirmation-text">Category Name</label>
+                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+            </div>
+        }
+        @if (ID == 3)
+        {
+            <div class="form-group">
+                <label class="confirmation-text-h">Add Manufacturer</label><hr style="margin-bottom:30px;">
+                <label class="confirmation-text">Manufacturer Name</label>
+                <input @bind="ManufacturerName" type="text" class="form-control" id="first-name" placeholder="Enter Manufacturer Name" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+            </div>
+        }
+        @if (ID == 4)
+        {
+            
+        }
+        @if (ID == 5)
+        {
+            
+        }
+        @if (ID == 6)
+        {
+            
+        }
+        @if (ID == 7)
+        {
+            <div class="form-group" >
+                <label class="confirmation-text-h">Edit Dakimakura</label><hr style="margin-bottom:30px;">
 
-        <div class="form-group">
-            <div class="error-auth-text">
-                <a >@ErrorText</a>
+                 <div style="display:flex;justify-content:space-between;">
+                    <label class="confirmation-text" style="width:30%; margin-top:8px;">ID</label>
+                    <input @bind-value="DakiID"  type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex;justify-content:space-between;">
+                    <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
+                    <input @bind-value="DakiImagePath" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    @if (FileUploadedToBucket == true)
+                    {
+                        <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
+                    }
+                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                    {
+                        <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                    }
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                    <div class="select">
+                        <select @bind="CategoryID" id="format">
+                            @foreach (var item in DBService.categories)
+                            {
+                                <option value=@(item.ID-1)>@item.Name</option>
+                            }
+                          
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
+                    <div class="select">
+                        <select @bind="ManufacturerID" id="format">
+                            @foreach (var item in DBService.manufacturers)
+                            {
+                                <option value=@(item.ID-1)>@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:25px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Name</label>
+                    <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Price</label>
+                    <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Filler</label>
+                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
+                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+            </div>
+
+        }
+        <div class="form-group" style="margin-bottom:20px; margin-top:20px;">
+            <div class=@regStyle>
+                <a>@ErrorText</a>
             </div>
         </div>
 
-        <button @onclick="Submit" class="btnXA" >Submit</button>
+        <button @onclick="Submit" class="btnXA">Submit</button>
         <button @onclick="Close" class="btnXB">Cancel</button>
-            
+
     </div>
 </AdminPanelForm>
 
 @code {
-    AdminPanelForm popupWindow;
 
-    string FirstName = string.Empty;
-    string LastName = string.Empty;
+    string _dakiNameImagePath = string.Empty;
+    private string DakiImagePath
+    {
+        get
+        {
+            return _dakiNameImagePath;
+        }
+        set
+        {
+            _dakiNameImagePath = value;
+            Check();
+        }
+    }
+    string _dakiID= string.Empty;
+    private string DakiID
+    {
+        get
+        {
+            return _dakiID;
+        }
+        set
+        {
+            _dakiID = value;
+            CheckDakiID();
+        }
+    }
+    bool FileUploadedToBucket = false;
+    string DakiName = string.Empty;
+    string DakiPrice = string.Empty;
+    string DakiFiller = string.Empty;
+    string DakiSize = string.Empty;
     string CategotyName = string.Empty;
     string ManufacturerName = string.Empty;
-    string ErrorText = string.Empty;
+    string AwsFileGuid = string.Empty;
+
+    int CategoryID = 0;
+    int ManufacturerID = 0;
+
+    AdminPanelForm popupWindow;
     int ID = 0;
-
-
+    string ErrorText = string.Empty;
+    string regStyle = "error-auth-text";
     //Добавить Дакимакуру      1
     //Добавить Категорию       2
     //Добавить Производителя   3
@@ -62,55 +258,106 @@ else
     //Удалить Производителя    6
     //Изменить Дакимакуру      7
 
+    private void Check()
+    {
+        if (File.Exists(DakiImagePath))
+        {
+            AwsFileGuid = Guid.NewGuid().ToString();
+            AWSManager.UploadFile(File.Open(DakiImagePath, FileMode.Open), "tmpdaki", AwsFileGuid, Amazon.RegionEndpoint.EUWest2);
+            FileUploadedToBucket = true;
+        }
+    }
+
+    private void CheckDakiID()
+    {
+        if(string.IsNullOrWhiteSpace(DakiID) ||!int.TryParse(DakiID,out int i) || int.Parse(DakiID)-1<0 || int.Parse(DakiID)-1 >= DBService.dakimakuras.Count())
+        {
+            regStyle = "error-auth-text";
+            ErrorText = "Incorrect ID";
+            ClearFields();
+            return;
+        }
+        var Daki = DBService.dakimakuras[int.Parse(DakiID)-1];
+
+        DakiName = Daki.Name;
+        DakiPrice = Daki.Price.ToString();
+        DakiFiller = Daki.Filler;
+        DakiSize = Daki.Size;
+        CategoryID = Daki.Category.ID;
+        ManufacturerID = Daki.Manufacturer.ID;
+        DakiImagePath = Daki.ImagePath;
+    }
+
+    private void Submit()
+    {
+        regStyle = "error-auth-text";
+
+        if (ID == 1)
+        {
+            var responce = Validation.ValidateNewDakimakura(DakiImagePath,DakiName,DakiPrice,DakiSize,DakiFiller);
+            ErrorText = responce.Item2;
+
+            if (!responce.Item1) return;
+            DBService.AddDakimakura(CategoryID+1,DakiImagePath,DakiName,int.Parse(DakiPrice),DakiSize,DakiFiller,ManufacturerID+1);
+        }
+        else if (ID == 2)
+        {
+            var responce = Validation.ValidateNewCategory(CategotyName);
+            ErrorText = responce.Item2;
+
+            if (!responce.Item1) return;
+            DBService.AddCategory(CategotyName);
+        }
+        else if (ID == 3)
+        {
+            var responce = Validation.ValidateNewManufacturer(ManufacturerName);
+            ErrorText = responce.Item2;
+
+            if (!responce.Item1) return;
+            DBService.AddManufacturer(ManufacturerName);
+        }
+        else if (ID == 4)
+        {
+
+        }
+        else if (ID == 5)
+        {
+
+        }
+        else if (ID == 6)
+        {
+
+        }
+        else
+        {
+            var responce = Validation.ValidateNewDakimakura(DakiImagePath,DakiName,DakiPrice,DakiSize,DakiFiller);
+            ErrorText = responce.Item2;
+        }
+        regStyle = "error-auth-text-nice";
+        DBService.UpdateData();
+
+    }
+
+    private void ClearFields()
+    {
+        DakiName =string.Empty;
+        DakiPrice =string.Empty;
+        DakiFiller =string.Empty;
+        DakiSize =string.Empty;
+        CategoryID = 0;
+        ManufacturerID = 0;
+        DakiImagePath = string.Empty;
+    }
+
     private void Show(int id)
     {
         ID = id;
         popupWindow.Show();
     }
 
-    private void Submit()
-    {
-        if(ID == 1)
-        {
-
-        }
-        else if(ID == 2)
-        {
-            var responce = Validation.ValidateNewCategory(CategotyName);
-            ErrorText = responce.Item2;
-
-            if (!responce.Item1)
-                return;
-
-            DBService.AddCategory(CategotyName);
-            DBService.UpdateDataFromDB();
-            popupWindow.Hide();
-        }
-        else if(ID == 3)
-        {
-
-        }
-        else if(ID == 4)
-        {
-
-        }
-        else if(ID == 5)
-        {
-
-        }
-        else if(ID == 6)
-        {
-
-        }
-        else
-        {
-            
-        }
-        
-    }
-
     private void Close()
     {
+        ClearFields();
         popupWindow.Hide();
     }
 }

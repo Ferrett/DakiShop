@@ -75,5 +75,36 @@ namespace RaportBlazorServer.Logic
 
 			return Tuple.Create(true, "Категория добавлена успешно");
 		}
+
+		public static Tuple<bool, string> ValidateNewManufacturer(string name)
+		{
+			if (string.IsNullOrWhiteSpace(name))
+				return Tuple.Create(false, "Некорректное название");
+
+			if (DBService.IsManufacturerExists(name))
+				return Tuple.Create(false, "Производитель с таким названием уже есть");
+
+			return Tuple.Create(true, "Производитель добавлен успешно");
+		}
+
+		public static Tuple<bool, string> ValidateNewDakimakura(string dakiNameImagePath, string dakiName, string dakiPrice, string dakiSize, string dakiFiller)
+		{
+			if (string.IsNullOrWhiteSpace(dakiNameImagePath))
+				return Tuple.Create(false, "Некорректное изображение");
+
+			if (string.IsNullOrWhiteSpace(dakiName))
+				return Tuple.Create(false, "Некорректное имя");
+
+			if (string.IsNullOrWhiteSpace(dakiSize))
+				return Tuple.Create(false, "Некорректный размер");
+
+			if (string.IsNullOrWhiteSpace(dakiFiller))
+				return Tuple.Create(false, "Некорректный наполнитель");
+
+			if (!int.TryParse(dakiPrice,out int i) ||int.Parse(dakiPrice)<=0)
+				return Tuple.Create(false, "Некорректная цена");
+
+			return Tuple.Create(true, "Дакимакура добавлена успешно");
+		}
 	}
 }

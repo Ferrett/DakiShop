@@ -13,9 +13,7 @@
                 <div class="modal-body">
                     @ChildContent
                 </div>
-                @*<div class="modal-footer">
-                    <button @onclick="OnPurchase" type="button" class="btn btn-light">Purchase</button>
-                </div>*@
+               
             </div>
         </div>
     </div>
@@ -31,59 +29,3 @@
     public void Show() => isDisplaying = true;
 }
 
-@*@if(ShowForm)
-{
-    <div class="simple-form">
-        <div class="form-group">
-            <label for="first-name">First Name</label>
-            <input @bind="FirstName" type="text" class="form-control" id="first-name" placeholder="Enter First Name">
-        </div>
-
-                <div class="form-group">
-            <label for="first-name">First Name</label>
-            <input @bind="LastName" type="text" class="form-control" id="last-name" placeholder="Enter Last Name">
-        </div>
-
-        <button @onclick="SubmitForm" class="btn btn-primary">Submit</button>
-        <button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
-            
-    </div>
-}
-else
-{
-    <div class="alert alert-success" role="alert">
-        Thanks @FirstName @LastName, submitted successfuly.<br/>
-        <button class="btn btn-primary" @onclick="Done">Done</button>
-    </div>
-}
-
-@code {
-    [CascadingParameter] ModalParameters Parameters{ get; set; }
-    [CascadingParameter] BlazoredModal BlazoredModal{ get; set; }
-
-    bool ShowForm { get; set; } = true;
-    string FirstName { get; set; } = string.Empty;
-    string LastName { get; set; } = string.Empty;
-    int FormId { get; set; }
-
-    protected override void OnInitialized()
-    {
-        FormId = Parameters.Get<int>("FormId");
-        BlazoredModal.SetTitle("Form Title");
-    }
-
-    void SubmitForm()
-    {
-        ShowForm = false;
-    }
-
-    void Done()
-    {
-        ModalService.Close(ModalResult.Ok("Form Submitted"));
-    }
-
-    void Cancel()
-    {
-        ModalService.Close(ModalResult.Cancel());
-    }
-}*@

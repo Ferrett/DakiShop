@@ -1,8 +1,10 @@
 ﻿@using DakiShop.Logic
 @inherits LayoutComponentBase
-@inject Blazored.LocalStorage.ILocalStorageService session;
+@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject Blazored.SessionStorage.ISessionStorageService sessionS;
 @inject AppState AppState
 @implements IDisposable
+
 @using DakiShop.Pages
 
 <PageTitle>DakiShop</PageTitle>
@@ -51,22 +53,29 @@
 
 @code{
 
-     //  Session
+    //  Session
     #region Session
 
     public async void ClearSession()
     {
-         await session.ClearAsync();
+        await sessionL.ClearAsync();
     }
 
 
     protected async override void OnInitialized()
     {
         AppState.OnChange += StateHasChanged;
-        var name = await session.GetItemAsync<string>("UserName");
-        AppState.UserName = name == null? "Login":name;
-        var root = await session.GetItemAsync<bool>("UserRoot");
-        AppState.UserRoot = root;
+
+        var a = await  sessionL.GetItemAsync<string>("name2");
+        AppState.UserName = a == null ? "Log In" : a;
+
+        var b = await  sessionL.GetItemAsync<string>("root2");
+        AppState.UserRoot = a == null ? false : (a.Equals("false") ? false:true );
+
+       
+        
+        StateHasChanged();
+
     }
 
     public void Dispose()
