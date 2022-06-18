@@ -20,6 +20,7 @@ namespace DakiShop.Logic
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(Config.configuration.GetConnectionString("MSSQL"));
+           
         }
     }
 }

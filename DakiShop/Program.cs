@@ -4,7 +4,7 @@ using DakiShop.Logic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using DakiShop.Models;
-
+using Microsoft.EntityFrameworkCore.Metadata;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +23,7 @@ builder.Services.AddSingleton<AppState>();
 AWSManager.UserKey = Config.configuration.GetSection("AWSKeys")["UserKey"];
 AWSManager.SecretKey = Config.configuration.GetSection("AWSKeys")["SecretKey"];
 
-//DBService.InitDB();
+DBService.InitDB();
 //DBService.AddRootUser("admin","vovkaprikhod@gmail.com","11111111");
 
 //DBService.AddDakimakura(1, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947368.jpg", "Капiтан Зеленський",5000, "170x60", "Sintepon", 4);

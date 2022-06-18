@@ -106,5 +106,21 @@ namespace RaportBlazorServer.Logic
 
 			return Tuple.Create(true, "Дакимакура добавлена успешно");
 		}
+
+		public static Tuple<bool, string> ValidateDeleteManufacturer(int manufacturerID)
+		{
+			if (DBService.IsManufacturerUsed(manufacturerID))
+				return Tuple.Create(false, "Удаление невозможно. Производитель используется");
+
+			return Tuple.Create(true, "Производитель успешно удалён");
+		}
+
+		public static Tuple<bool, string> ValidateDeleteCategory(int categoryID)
+		{
+			if (DBService.IsManufacturerUsed(categoryID))
+				return Tuple.Create(false, "Удаление невозможно. Категория используется");
+
+			return Tuple.Create(true, "Категория успешно удалена");
+		}
 	}
 }

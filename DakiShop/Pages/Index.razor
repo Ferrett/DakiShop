@@ -21,36 +21,38 @@
     <div class="main-container">
         <div class="filters-container">
             <div class="search-field">
-                <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput"/>
+                <input class="input-field" maxlength="30" placeholder="Search" @bind-value="searchQuery" @bind-value:event="oninput" />
             </div>
             <div class="scroll-field">
-                <span class="scroll-label" >Max Price: @CurrentPrice ₴</span>
-                <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@CurrentPrice" @bind:event="oninput">
+                <span class="scroll-label">Max Price: @CurrentPrice ₴</span>
+                <div>
+                    <input type="range" id="myRange" class="price-range" name="points" min="0" step="@step" max=@max_price @bind="@CurrentPrice" @bind:event="oninput">
+                </div>
             </div>
-           
+
             <div class="category-field">
                 <div class="select">
-                    <select @bind="CategoryID" id="format">  
-                    <option value="0">All</option>
-                    @foreach (var item in DBService.categories)
-                    {
-                      <option value=@item.ID>@item.Name</option>   
-                    }
+                    <select @bind="CategoryID" id="format">
+                        <option value="0">All</option>
+                        @foreach (var item in DBService.categories)
+                        {
+                            <option value=@item.ID>@item.Name</option>
+                        }
                     </select>
                 </div>
             </div>
         </div>
     </div>
 </div>
-               
+
 
 <div class="stretched">
     <div class="assortment-container">
-        @if (DBService.dakimakuras.Count == 0 
-        ||(!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0)
-        ||(!DBService.dakimakuras.Where(x=>x.Category.ID == CategoryID).Any(x=>x.Price <=CurrentPrice)&&CategoryID!=0)
-        ||(!DBService.dakimakuras.Any(x=>x.Category.ID ==CategoryID)&&CategoryID!=0)
-        ||(!DBService.dakimakuras.Any(x=>x.Price <=CurrentPrice)&&CategoryID==0))
+        @if (DBService.dakimakuras.Count == 0
+        || (!string.IsNullOrWhiteSpace(searchQuery) && DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())).ToList().Count == 0)
+        || (!DBService.dakimakuras.Where(x => x.Category.ID == CategoryID).Any(x => x.Price <= CurrentPrice) && CategoryID != 0)
+        || (!DBService.dakimakuras.Any(x => x.Category.ID == CategoryID) && CategoryID != 0)
+        || (!DBService.dakimakuras.Any(x => x.Price <= CurrentPrice) && CategoryID == 0))
         {
             <div class="assortment-container-stretched">Sorry! Nothing has been found by your request!</div>
         }
@@ -58,22 +60,29 @@
         {
             foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
             {
-                @if(item.Price<= CurrentPrice && (item.Category.ID.Equals(CategoryID)||CategoryID==0)) 
+                @if (item.Price <= CurrentPrice && (item.Category.ID.Equals(CategoryID) || CategoryID == 0))
                 {
-                    <element  @onclick="(() => RedirectToItem(item.ID))" class="card">
+
+                    <element @onclick="(() => RedirectToItem(item.ID))" class="card" style="justify-content:space-between; flex-direction:column; display:flex;">
                         <div>
-                        <img class="card-img" src=@item.ImagePath>
-                    </div>
-                    <div>
-                        <div class="card-title">@item.Name</div>
-         
-                        <div class="card-info">
-                            <div class="card-price">@item.Price ₴</div>
-                            <svg class="card-rating-image"fill="orange" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/></svg>
-                            <div class="card-rating-score">@(item.Rating==0?"---":item.Rating)</div>
+                            <img class="card-img" src=@item.ImagePath>
                         </div>
-                    </div>
+                        <div>
+                            <div class="card-title">@item.Name</div>
+
+                            <div class="card-info">
+                                <div style="width:70%;">
+                                    <div class="card-price">@item.Price ₴</div>
+                                </div>
+
+                                <div style="width:30%; display:flex;">
+                                    <svg class="card-rating-image" fill="orange" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                                    <div class="card-rating-score">@(item.Rating==0?"5.0":item.Rating)</div>
+                                </div>
+                            </div>
+                        </div>
                     </element>
+
                 }
             }
         }
@@ -83,9 +92,9 @@
 
 
 
-@code{
+@code {
     string FilePath = string.Empty;
-    string searchQuery =string.Empty;
+    string searchQuery = string.Empty;
 
     int max_price = 0;
     int step = 10;
@@ -103,7 +112,7 @@
         }
     }
 
-    private int _categoryID  = 0;
+    private int _categoryID = 0;
     private int CategoryID
     {
         get
@@ -120,7 +129,7 @@
 
     public void RedirectToItem(int itemID)
     {
-        NavManager.NavigateTo("/Dakimakura/"+ itemID.ToString());
+        NavManager.NavigateTo("/Dakimakura/" + itemID.ToString());
     }
 
     private async void UpdatePriceScrollValues()
@@ -128,7 +137,7 @@
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
         await JSRuntime.InvokeVoidAsync("updScroll");
-        await JSRuntime.InvokeVoidAsync("setPriceScroll",max_price);
+        await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
         StateHasChanged();
     }
 
@@ -140,10 +149,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("setPriceScroll",max_price);
+            await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
             StateHasChanged();
         }
-    }    
+    }
 }

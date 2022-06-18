@@ -26,14 +26,13 @@
     margin-top: 50px;
     width: 100%;
     display: flex;
-    justify-content: normal;
+    justify-content: space-between;
 }
 
 .search-field {
-    width: 33%;
-    margin-right: 20px;
-    margin-left: 150px;
+    width: 23%;
     
+    margin-left: 150px;
 }
 
 .search-label {
@@ -141,8 +140,12 @@
 }
 
 .card-img {
-    width: 100%;
-    height: auto;
+   
+    max-height: 280px;
+    object-fit:contain;
+    /*min-height: 280px;*/
+
+    
 }
 
 .card-title {
@@ -158,20 +161,12 @@
     justify-content: normal;
 }
 
-.card-price {
-    color: black;
-    font-family: 'Circe-B';
-    font-size: 10px;
-    margin-bottom: 5px;
-    margin-left: 25px;
-    margin-right: 25px;
-}
+
 
 .card-rating-image {
     width: 35px;
     height: 35px;
     margin-top: 9px;
-    margin-left: 40px;
 }
 
 .card-rating-score {
@@ -179,8 +174,6 @@
     font-family: 'Circe-B';
     font-size: 25px;
     margin-top: 10px;
-    margin-left: 8px;
-
 }
 
 .purchase-segment {
@@ -191,7 +184,7 @@
 
 .card-price {
     color: #0b2a3d;
-    font-size: 28px;
+    font-size: 25px;
     font-family: 'Circe-B';
     margin-top: 10px;
     margin-right:50px;
@@ -291,9 +284,7 @@ label {
     }
 
 .scroll-field {
-    width: 33%;
-    margin-right: 100px;
-    margin-left: 100px;
+    width: 40%;
 }
 
 .drop-down-field {
@@ -316,7 +307,6 @@ label {
 .category-field {
     width: 33%;
     margin-right: 80px;
-    margin-left: 0px;
     margin-top:15px;
 }
 

@@ -1,12 +1,13 @@
 ﻿using DakiShop.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DakiShop.Logic
 {
     public static class DBService
     {
-        //public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
-        //public static List<Category> categories { get; set; } = new List<Category>();
-        //public static List<Manufacturer> manufacturers { get; set; } = new List<Manufacturer>();
+        public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
+        public static List<Category> categories { get; set; } = new List<Category>();
+        public static List<Manufacturer> manufacturers { get; set; } = new List<Manufacturer>();
         public static void InitDB()
         {
             using (DBContext db = new DBContext())
@@ -31,6 +32,25 @@ namespace DakiShop.Logic
                     PurchasedNumber = 0,
                     Rating = 0
                 });
+                db.SaveChanges();
+            }
+        }
+
+        public static void EditDakimakura(int dakiID,int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Dakimakura.Where(x=>x.ID == dakiID).First();
+                d.Category = db.Category.FirstOrDefault(x => x.ID == categoryID)!;
+                d.ImagePath = imagePath;
+                d.Name = name;
+                d.Price = price;
+                d.Size = size;
+                d.Filler = filler;
+                d.Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == manufacturerID)!;
+
+
+
                 db.SaveChanges();
             }
         }
@@ -175,13 +195,50 @@ namespace DakiShop.Logic
             }
         }
 
-        //public static Dakimakura GetDakimakuraByID(int id)
-        //{
-        //    using (DBContext db = new DBContext())
-        //    {
-        //       return db.Manufacturer.Add(new Manufacturer { Name = name });
-               
-        //    }
-        //}
+        public static bool IsManufacturerUsed(int manufacturerID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if(db.Dakimakura.Any(x=>x.Manufacturer.ID == manufacturerID))
+                    return true;
+
+                return false;
+            }
+        }
+
+        public static void DeleteManufacturer(int manufacturerID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Manufacturer.Remove(db.Manufacturer.Where(x => x.ID == manufacturerID).First()); 
+
+                db.SaveChanges();
+            }
+        }
+
+        public static bool IsCategoryUsed(int categoryID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Dakimakura.Any(x => x.Category.ID == categoryID))
+                    return true;
+
+                return false;
+            }
+        }
+
+        public static void DeleteCategory(int categoryID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Category.Remove(db.Category.Where(x => x.ID == categoryID).First());
+
+                //List<Category> a = db.Category.Where(x => x.ID > categoryID).ToList();
+                //a.ForEach(x => x.ID--);
+                //db.Category.fr
+            
+                db.SaveChanges();
+            }
+        }
     }
 }
