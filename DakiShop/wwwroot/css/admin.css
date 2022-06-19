@@ -114,3 +114,7 @@
     background: cyan;
     color: black;
 }
+
+.form-control::placeholder {
+    color: #E6E6E6;
+}
