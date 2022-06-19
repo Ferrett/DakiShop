@@ -87,7 +87,7 @@ namespace RaportBlazorServer.Logic
 			return Tuple.Create(true, "Производитель добавлен успешно");
 		}
 
-		public static Tuple<bool, string> ValidateNewDakimakura(string dakiNameImagePath, string dakiName, string dakiPrice, string dakiSize, string dakiFiller)
+		public static Tuple<bool, string> ValidateNewDakimakura(string dakiNameImagePath, string dakiName, string dakiPrice, string dakiSize, string dakiFiller,bool reqNewName)
 		{
 			if (string.IsNullOrWhiteSpace(dakiNameImagePath))
 				return Tuple.Create(false, "Некорректное изображение");
@@ -104,23 +104,40 @@ namespace RaportBlazorServer.Logic
 			if (!int.TryParse(dakiPrice,out int i) ||int.Parse(dakiPrice)<=0)
 				return Tuple.Create(false, "Некорректная цена");
 
-			return Tuple.Create(true, "Дакимакура добавлена успешно");
+			if (reqNewName)
+			{
+				if (DBService.IsDakimakuraExists(dakiName))
+					return Tuple.Create(false, "Дакимакура с таким названием уже есть");
+			}
+
+			if (reqNewName)
+				return Tuple.Create(true, "Дакимакура добавлена успешно");
+
+			return Tuple.Create(true, "Дакимакура изменена успешно");
 		}
 
-		public static Tuple<bool, string> ValidateDeleteManufacturer(int manufacturerID)
+		public static Tuple<bool, string> ValidateDeleteManufacturer(int id)
 		{
-			if (DBService.IsManufacturerUsed(manufacturerID))
+			if (DBService.IsManufacturerUsed(id))
 				return Tuple.Create(false, "Удаление невозможно. Производитель используется");
 
 			return Tuple.Create(true, "Производитель успешно удалён");
 		}
 
-		public static Tuple<bool, string> ValidateDeleteCategory(int categoryID)
+		public static Tuple<bool, string> ValidateDeleteCategory(int id)
 		{
-			if (DBService.IsManufacturerUsed(categoryID))
+			if (DBService.IsCategoryUsed(id))
 				return Tuple.Create(false, "Удаление невозможно. Категория используется");
 
 			return Tuple.Create(true, "Категория успешно удалена");
+		}
+
+		public static Tuple<bool, string> ValidateDeleteDakimakura(int id)
+		{
+			if (!DBService.IsDakimakuraExists(id))
+				return Tuple.Create(false, "Удаление невозможно. Категория используется");
+
+			return Tuple.Create(true, "Дакимакура успешно удалена");
 		}
 	}
 }

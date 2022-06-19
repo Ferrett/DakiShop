@@ -28,7 +28,7 @@ else
     <div class="simple-form">
         @if (ID == 1)
         {
-            <div class="form-group" >
+            <div class="form-group">
                 <label class="confirmation-text-h">Add Dakimakura</label><hr style="margin-bottom:30px;">
 
                 <div style="display:flex;justify-content:space-between;">
@@ -55,7 +55,7 @@ else
                             {
                                 <option value=@(item.ID-1)>@item.Name</option>
                             }
-                          
+
                         </select>
                     </div>
                 </div>
@@ -111,7 +111,75 @@ else
         }
         @if (ID == 4)
         {
-            
+            <div class="form-group">
+                <label class="confirmation-text-h">Delete Dakimakura</label><hr style="margin-bottom:30px;">
+
+                <div style="display:flex;justify-content:space-between;">
+                    <label class="confirmation-text" style="width:30%; margin-top:8px;">ID</label>
+                    <input @bind-value="DakiID" type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex;justify-content:space-between;">
+                    <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
+                    <input @bind-value="DakiImagePath" readonly type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:center;">
+                    @if (FileUploadedToBucket == true)
+                    {
+                        <img class="card-img" readonly src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
+                    }
+                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                    {
+                        <img class="card-img" readonly src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                    }
+                </div>
+
+                <div style="display:flex; justify-content:space-between;">
+                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                    <div class="select">
+                        <select @bind="CategoryID" readonly id="format">
+                            @foreach (var item in DBService.categories)
+                            {
+                                <option value=@(item.ID-1) disabled>@item.Name</option>
+                            }
+
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
+                    <div class="select">
+                        <select @bind="ManufacturerID" id="format">
+                            @foreach (var item in DBService.manufacturers)
+                            {
+                                <option value=@(item.ID-1) disabled>@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:25px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Name</label>
+                    <input @bind-value="DakiName" type="text" readonly class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Price</label>
+                    <input @bind-value="DakiPrice" type="text" readonly class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Filler</label>
+                    <input @bind-value="DakiFiller" type="text" readonly class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
+                    <input @bind-value="DakiSize" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
+            </div>
         }
         @if (ID == 5)
         {
@@ -149,12 +217,12 @@ else
         }
         @if (ID == 7)
         {
-            <div class="form-group" >
+            <div class="form-group">
                 <label class="confirmation-text-h">Edit Dakimakura</label><hr style="margin-bottom:30px;">
 
-                 <div style="display:flex;justify-content:space-between;">
+                <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">ID</label>
-                    <input @bind-value="DakiID"  type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiID" type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex;justify-content:space-between;">
@@ -181,7 +249,7 @@ else
                             {
                                 <option value=@(item.ID-1)>@item.Name</option>
                             }
-                          
+
                         </select>
                     </div>
                 </div>
@@ -227,7 +295,7 @@ else
         </div>
 
         <button @onclick="Submit" class="btnXA">Submit</button>
-        <button @onclick="Close" class="btnXB">Cancel</button>
+        <button @onclick="Close" class="btnXB">Exit</button>
 
     </div>
 </AdminPanelForm>
@@ -247,7 +315,7 @@ else
             Check();
         }
     }
-    string _dakiID= string.Empty;
+    string _dakiID = string.Empty;
     private string DakiID
     {
         get
@@ -296,22 +364,22 @@ else
 
     private void CheckDakiID()
     {
-        if(string.IsNullOrWhiteSpace(DakiID) ||!int.TryParse(DakiID,out int i) || int.Parse(DakiID)-1<0 || int.Parse(DakiID)-1 >= DBService.dakimakuras.Count())
+        if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) || int.Parse(DakiID) - 1 < 0 || !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
         {
+            ClearFields();
             regStyle = "error-auth-text";
             ErrorText = "Incorrect ID";
-            ClearFields();
             return;
         }
         ErrorText = string.Empty;
-        var Daki = DBService.dakimakuras[int.Parse(DakiID)-1];
+        var Daki = DBService.dakimakuras.First(x => x.ID == int.Parse(DakiID));
 
         DakiName = Daki.Name;
         DakiPrice = Daki.Price.ToString();
         DakiFiller = Daki.Filler;
         DakiSize = Daki.Size;
-        CategoryID = Daki.Category.ID-1;
-        ManufacturerID = Daki.Manufacturer.ID-1;
+        CategoryID = Daki.Category.ID - 1;
+        ManufacturerID = Daki.Manufacturer.ID - 1;
         DakiImagePath = Daki.ImagePath;
     }
 
@@ -321,11 +389,11 @@ else
 
         if (ID == 1)
         {
-            var responce = Validation.ValidateNewDakimakura(DakiImagePath,DakiName,DakiPrice,DakiSize,DakiFiller);
+            var responce = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller,true);
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
-            DBService.AddDakimakura(CategoryID+1,DakiImagePath,DakiName,int.Parse(DakiPrice),DakiSize,DakiFiller,ManufacturerID+1);
+            DBService.AddDakimakura(CategoryID + 1, DakiImagePath, DakiName, int.Parse(DakiPrice), DakiSize, DakiFiller, ManufacturerID + 1);
         }
         else if (ID == 2)
         {
@@ -345,31 +413,40 @@ else
         }
         else if (ID == 4)
         {
+            var responce = Validation.ValidateDeleteDakimakura(int.Parse(DakiID));
+            ErrorText = responce.Item2;
 
+            if (!responce.Item1) return;
+            DBService.DeleteDakimakura(int.Parse(DakiID));
         }
         else if (ID == 5)
         {
-            var responce = Validation.ValidateDeleteCategory(CategoryID+1);
+            var responce = Validation.ValidateDeleteCategory(CategoryID + 1);
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
-            DBService.DeleteCategory(CategoryID+1);
+            DBService.DeleteCategory(CategoryID + 1);
         }
         else if (ID == 6)
         {
-            var responce = Validation.ValidateDeleteManufacturer(ManufacturerID+1);
+            var responce = Validation.ValidateDeleteManufacturer(ManufacturerID + 1);
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
-            DBService.DeleteManufacturer(ManufacturerID+1);
+            DBService.DeleteManufacturer(ManufacturerID + 1);
         }
         else
         {
-            var responce = Validation.ValidateNewDakimakura(DakiImagePath,DakiName,DakiPrice,DakiSize,DakiFiller);
+            var responce = Validation.ValidateDeleteDakimakura(int.Parse(DakiID));
             ErrorText = responce.Item2;
-
             if (!responce.Item1) return;
-            DBService.EditDakimakura(int.Parse(DakiID),CategoryID+1,DakiImagePath,DakiName,int.Parse(DakiPrice),DakiSize,DakiFiller,ManufacturerID+1);
+
+            var responce2 = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller,false);
+            ErrorText = responce2.Item2;
+
+            if (!responce2.Item1) return;
+            DBService.EditDakimakura(int.Parse(DakiID), CategoryID + 1, DakiImagePath, DakiName, int.Parse(DakiPrice), DakiSize, DakiFiller, ManufacturerID + 1);
+
         }
         regStyle = "error-auth-text-nice";
         DBService.UpdateData();
@@ -378,13 +455,15 @@ else
 
     private void ClearFields()
     {
-        DakiName =string.Empty;
-        DakiPrice =string.Empty;
-        DakiFiller =string.Empty;
-        DakiSize =string.Empty;
+        DakiName = string.Empty;
+        DakiPrice = string.Empty;
+        DakiFiller = string.Empty;
+        DakiSize = string.Empty;
         CategoryID = 0;
         ManufacturerID = 0;
+        DakiID = string.Empty;
         DakiImagePath = string.Empty;
+        ErrorText = string.Empty;
     }
 
     private void Show(int id)

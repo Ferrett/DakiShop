@@ -176,6 +176,25 @@ namespace DakiShop.Logic
                 db.SaveChanges();
             }
         }
+        public static bool IsDakimakuraExists(string name)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Dakimakura.ToList().Any(x => x.Name.ToLower().Equals(name.ToLower())))
+                    return true;
+            }
+            return false;
+        }
+
+        public static bool IsDakimakuraExists(int id)
+        {
+            using (DBContext db = new DBContext())
+            {
+                if (db.Dakimakura.ToList().Any(x => x.ID == id))
+                    return true;
+            }
+            return false;
+        }
 
         public static bool IsManufacturerExists(string name)
         {
@@ -195,48 +214,58 @@ namespace DakiShop.Logic
             }
         }
 
-        public static bool IsManufacturerUsed(int manufacturerID)
+        public static bool IsManufacturerUsed(int id)
         {
             using (DBContext db = new DBContext())
             {
-                if(db.Dakimakura.Any(x=>x.Manufacturer.ID == manufacturerID))
+                if(db.Dakimakura.Any(x=>x.Manufacturer.ID == id))
                     return true;
 
                 return false;
             }
         }
 
-        public static void DeleteManufacturer(int manufacturerID)
+        public static void DeleteManufacturer(int id)
         {
             using (DBContext db = new DBContext())
             {
-                db.Manufacturer.Remove(db.Manufacturer.Where(x => x.ID == manufacturerID).First()); 
+                db.Manufacturer.Remove(db.Manufacturer.Where(x => x.ID == id).First()); 
 
                 db.SaveChanges();
             }
         }
 
-        public static bool IsCategoryUsed(int categoryID)
+        public static bool IsCategoryUsed(int id)
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Dakimakura.Any(x => x.Category.ID == categoryID))
+                if (db.Dakimakura.Any(x => x.Category.ID == id))
                     return true;
 
                 return false;
             }
         }
 
-        public static void DeleteCategory(int categoryID)
+        public static void DeleteCategory(int id)
         {
             using (DBContext db = new DBContext())
             {
-                db.Category.Remove(db.Category.Where(x => x.ID == categoryID).First());
+                db.Category.Remove(db.Category.Where(x => x.ID == id).First());
 
-                //List<Category> a = db.Category.Where(x => x.ID > categoryID).ToList();
-                //a.ForEach(x => x.ID--);
-                //db.Category.fr
+               
             
+                db.SaveChanges();
+            }
+        }
+
+        public static void DeleteDakimakura(int id)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Dakimakura.Remove(db.Dakimakura.Where(x => x.ID == id).First());
+
+
+
                 db.SaveChanges();
             }
         }
