@@ -10,13 +10,6 @@
 
 <PageTitle>Store</PageTitle>
 
-@*<input @bind-value="FilePath" type="file"/>
-<a>@FilePath </a>*@
-@*<NavLink href="/Dakimakura/1">
-   <br> <button>Dakimakura</button> <br>
-</NavLink>*@
-
-
 <div class="site-holder">
     <div class="main-container">
         <div class="filters-container">
@@ -67,17 +60,17 @@
                         <div>
                             <img class="card-img" src=@item.ImagePath>
                         </div>
+                                <hr>
                         <div>
-                            <div class="card-title">@item.Name</div>
+                            <div class="card-title">@(item.Name + (AppState.UserRoot?$" [ID {item.ID}]":string.Empty))</div>
 
                             <div class="card-info">
                                 <div style="width:70%;">
                                     <div class="card-price">@item.Price ₴</div>
                                 </div>
-
                                 <div style="width:30%; display:flex;">
                                     <svg class="card-rating-image" fill="orange" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                                    <div class="card-rating-score">@(item.Rating==0?"--":item.Rating)</div>
+                                    <div class="card-rating-score">@(item.Rating==0?" --":item.Rating)</div>
                                 </div>
                             </div>
                         </div>

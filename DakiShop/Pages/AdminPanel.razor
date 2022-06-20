@@ -4,9 +4,10 @@
 
 
 @inject AppState AppState
-
-
 @page "/adminpanel"
+
+<PageTitle>Admin Panel</PageTitle>
+
 @if (AppState.UserRoot)
 {
     <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
@@ -33,7 +34,7 @@ else
 
                 <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                    <input @bind-value="DakiImagePath" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiImagePath" @bind-value:event="oninput"  type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:center;">
@@ -74,22 +75,22 @@ else
 
                 <div style="display:flex; justify-content:space-between; margin-top:25px;">
                     <label class="confirmation-text" style="margin-top:10px;">Name</label>
-                    <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
                     <label class="confirmation-text" style="margin-top:10px;">Price</label>
-                    <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
                     <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
                     <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
             </div>
         }
@@ -98,7 +99,7 @@ else
             <div class="form-group">
                 <label class="confirmation-text-h">Add Category</label><hr style="margin-bottom:30px;">
                 <label class="confirmation-text">Category Name</label>
-                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
             </div>
         }
         @if (ID == 3)
@@ -106,7 +107,7 @@ else
             <div class="form-group">
                 <label class="confirmation-text-h">Add Manufacturer</label><hr style="margin-bottom:30px;">
                 <label class="confirmation-text">Manufacturer Name</label>
-                <input @bind="ManufacturerName" type="text" class="form-control" id="first-name" placeholder="Enter Manufacturer Name" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                <input @bind="ManufacturerName" type="text" class="form-control" id="first-name" placeholder="Enter Manufacturer Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
             </div>
         }
         @if (ID == 4)
@@ -116,69 +117,74 @@ else
 
                 <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">ID</label>
-                    <input @bind-value="DakiID" type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiID" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="1" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
-                <div style="display:flex;justify-content:space-between;">
-                    <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                    <input @bind-value="DakiImagePath" readonly type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                @if (IDentered)
+                {
 
-                <div style="display:flex; justify-content:center;">
-                    @if (FileUploadedToBucket == true)
-                    {
-                        <img class="card-img" readonly src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
-                    }
-                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
-                    {
-                        <img class="card-img" readonly src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
-                    }
-                </div>
-
-                <div style="display:flex; justify-content:space-between;">
-                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
-                    <div class="select">
-                        <select @bind="CategoryID" readonly id="format">
-                            @foreach (var item in DBService.categories)
-                            {
-                                <option value=@(item.ID-1) disabled>@item.Name</option>
-                            }
-
-                        </select>
+                    <div style="display:flex;justify-content:space-between;">
+                        <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
+                        <input @bind-value="DakiImagePath" readonly type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
-                </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
-                    <div class="select">
-                        <select @bind="ManufacturerID" id="format">
-                            @foreach (var item in DBService.manufacturers)
-                            {
-                                <option value=@(item.ID-1) disabled>@item.Name</option>
-                            }
-                        </select>
+                    <div style="display:flex; justify-content:center;">
+                        @if (FileUploadedToBucket == true)
+                        {
+                            <img class="card-img" readonly src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
+                        }
+                        else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                        {
+                            <img class="card-img" readonly src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                        }
                     </div>
-                </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:25px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Name</label>
-                    <input @bind-value="DakiName" type="text" readonly class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                        <div class="select">
+                            <select @bind="CategoryID" readonly id="format">
+                                @foreach (var item in DBService.categories)
+                                {
+                                    <option value=@(item.ID-1) disabled>@item.Name</option>
+                                }
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Price</label>
-                    <input @bind-value="DakiPrice" type="text" readonly class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                            </select>
+                        </div>
+                    </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                    <input @bind-value="DakiFiller" type="text" readonly class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
+                        <div class="select">
+                            <select @bind="ManufacturerID" id="format">
+                                @foreach (var item in DBService.manufacturers)
+                                {
+                                    <option value=@(item.ID-1) disabled>@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                    <input @bind-value="DakiSize" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:25px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Name</label>
+                        <input @bind-value="DakiName" type="text" readonly class="form-control" id="first-name" placeholder="Dakimakura" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Price</label>
+                        <input @bind-value="DakiPrice" type="text" readonly class="form-control" id="first-name" placeholder="10 000" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Filler</label>
+                        <input @bind-value="DakiFiller" type="text" readonly class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Size</label>
+                        <input @bind-value="DakiSize" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+                }
+
             </div>
         }
         @if (ID == 5)
@@ -222,70 +228,74 @@ else
 
                 <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">ID</label>
-                    <input @bind-value="DakiID" type="text" class="form-control" id="first-name" placeholder="1" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiID" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="1" style="text-align:start; width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
-                <div style="display:flex;justify-content:space-between;">
-                    <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                    <input @bind-value="DakiImagePath" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
-
-                <div style="display:flex; justify-content:center;">
-                    @if (FileUploadedToBucket == true)
-                    {
-                        <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
-                    }
-                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
-                    {
-                        <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
-                    }
-                </div>
-
-                <div style="display:flex; justify-content:space-between;">
-                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
-                    <div class="select">
-                        <select @bind="CategoryID" id="format">
-                            @foreach (var item in DBService.categories)
-                            {
-                                <option value=@(item.ID-1)>@item.Name</option>
-                            }
-
-                        </select>
+                @if (IDentered)
+                {
+                    <div style="display:flex;justify-content:space-between;">
+                        <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
+                        <input @bind-value="DakiImagePath" @bind-value:event="oninput"   type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
-                </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
-                    <div class="select">
-                        <select @bind="ManufacturerID" id="format">
-                            @foreach (var item in DBService.manufacturers)
-                            {
-                                <option value=@(item.ID-1)>@item.Name</option>
-                            }
-                        </select>
+                    <div style="display:flex; justify-content:center;">
+                        @if (FileUploadedToBucket == true)
+                        {
+                            <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
+                        }
+                        else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                        {
+                            <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                        }
                     </div>
-                </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:25px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Name</label>
-                    <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                        <div class="select">
+                            <select @bind="CategoryID" id="format">
+                                @foreach (var item in DBService.categories)
+                                {
+                                    <option value=@(item.ID-1)>@item.Name</option>
+                                }
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Price</label>
-                    <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                            </select>
+                        </div>
+                    </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Manufacturer</label>
+                        <div class="select">
+                            <select @bind="ManufacturerID" id="format">
+                                @foreach (var item in DBService.manufacturers)
+                                {
+                                    <option value=@(item.ID-1)>@item.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
 
-                <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
-                </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:25px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Name</label>
+                        <input @bind-value="DakiName" type="text" class="form-control" id="first-name" placeholder="Dakimakura" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Price</label>
+                        <input @bind-value="DakiPrice" type="text" class="form-control" id="first-name" placeholder="10 000" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Filler</label>
+                        <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Size</label>
+                        <input @bind-value="DakiSize"  type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+                }
             </div>
+
 
         }
         <div class="form-group" style="margin-bottom:20px; margin-top:20px;">
@@ -337,6 +347,7 @@ else
     string ManufacturerName = string.Empty;
     string AwsFileGuid = string.Empty;
 
+    bool IDentered = false;
     int CategoryID = 0;
     int ManufacturerID = 0;
 
@@ -364,13 +375,15 @@ else
 
     private void CheckDakiID()
     {
-        if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) || int.Parse(DakiID) - 1 < 0 || !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
+        if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) ||  !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
         {
             ClearFields();
             regStyle = "error-auth-text";
             ErrorText = "Incorrect ID";
+            IDentered = false;
             return;
         }
+        IDentered = true;
         ErrorText = string.Empty;
         var Daki = DBService.dakimakuras.First(x => x.ID == int.Parse(DakiID));
 
@@ -389,7 +402,7 @@ else
 
         if (ID == 1)
         {
-            var responce = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller,true);
+            var responce = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller, true);
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
@@ -441,7 +454,7 @@ else
             ErrorText = responce.Item2;
             if (!responce.Item1) return;
 
-            var responce2 = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller,false);
+            var responce2 = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller, false);
             ErrorText = responce2.Item2;
 
             if (!responce2.Item1) return;
@@ -449,7 +462,7 @@ else
 
         }
         regStyle = "error-auth-text-nice";
-        DBService.UpdateData();
+        ////DBService.UpdateData();
 
     }
 
@@ -459,9 +472,11 @@ else
         DakiPrice = string.Empty;
         DakiFiller = string.Empty;
         DakiSize = string.Empty;
+        ManufacturerName = string.Empty;
+        CategotyName = string.Empty;
         CategoryID = 0;
         ManufacturerID = 0;
-        DakiID = string.Empty;
+        //DakiID = string.Empty;
         DakiImagePath = string.Empty;
         ErrorText = string.Empty;
     }

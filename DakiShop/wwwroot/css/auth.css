@@ -10,7 +10,7 @@ body {
     background-size: 200% 100% !important;
     animation: move 30s ease infinite;
     transform: translate3d(0, 0, 0);
-    background: linear-gradient(45deg, #49D49D 10%, #A2C7E5 90%);
+    background: rgb(255,229,229);
     min-height: 100vh;
 }
 

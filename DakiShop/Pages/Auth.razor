@@ -92,11 +92,13 @@
 
     public async void SaveSession()
     {
-        await sessionL.SetItemAsync("name2",login);
-        await sessionL.SetItemAsync("root2",DBService.GetCurrentUserRoot(login)==false?"false":"true");
+        await sessionL.SetItemAsync("name3",login);
+        await sessionL.SetItemAsync("root3",DBService.GetCurrentUserRoot(login)==false?"false":"true");
 
         AppState.UserRoot = DBService.GetCurrentUserRoot(login);
         AppState.UserName = login;
+
+       
         StateHasChanged();
     }
 }

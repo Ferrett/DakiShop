@@ -1,17 +1,208 @@
 ﻿@page "/Dakimakura/{ID}"
+@using DakiShop.Logic
+@using DakiShop.Models
+@using DakiShop.Pages
+@inject IJSRuntime JSRuntime
+@inject IToastService toastService
+@inject AppState AppState
+<PageTitle>@daki.Name</PageTitle>
 
-<PageTitle>Store</PageTitle>
 
-<h1>hello miga @a</h1>
+
+<div class="site-holder">
+    <div class="daki-main">
+        <div style="justify-content:space-between; margin-left:20%;">
+            <div>
+                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name + (AppState.UserRoot?$" [ID {daki.ID}]":string.Empty))</span>
+            </div>
+
+            <div class="daki-card" style="margin-top:15px;">
+                <img class="daki-image" style="" src=@daki.ImagePath>
+            </div>
+        </div>
+
+        <div class="daki-desc">
+
+            <div class="daki-desc-line">
+                <span style="padding-top:5px">Price:</span>
+                <span class="daki-desc-line2">@daki.Price</span>
+            </div>
+            <hr>
+
+            <div class="daki-desc-line">
+                <span style="padding-top:5px">Purchased:</span>
+                <span class="daki-desc-line2">@daki.PurchasedNumber</span>
+            </div>
+            <hr>
+            <div class="daki-desc-line">
+                <span style="padding-top:5px;">Filler:</span>
+                <span class="daki-desc-line2">@daki.Filler</span>
+            </div>
+            <hr>
+            <div class="daki-desc-line">
+                <span style="padding-top:5px;">Size:</span>
+                <span class="daki-desc-line2">@daki.Size</span>
+            </div>
+            <hr>
+            <div class="daki-desc-line">
+                <span style="padding-top:5px">Manufacturer:</span>
+                <span class="daki-desc-line2">@daki.Manufacturer.Name</span>
+            </div>
+            <hr>
+            <div class="daki-desc-line">
+                <span style="padding-top:5px">Rating:</span>
+                <div>
+                    <svg style="margin-bottom:10px;" fill="orange" xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+
+                    <span class="daki-desc-line2">@(daki.Rating==0?" --":daki.Rating)</span>
+                </div>
+            </div>
+            <hr>
+            <div style="justify-content:space-between; display:flex;  ">
+                <svg class="cart-button" style="margin:20px 0px 0px 0px;" @onclick="AddToCart" id="Cart" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 3l-.743 2h-1.929l-3.474 12h-13.239l-4.615-11h16.812l-.564 2h-13.24l2.937 7h10.428l3.432-12h4.195zm-15.5 15c-.828 0-1.5.672-1.5 1.5 0 .829.672 1.5 1.5 1.5s1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5zm6.9-7-1.9 7c-.828 0-1.5.671-1.5 1.5s.672 1.5 1.5 1.5 1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5z" /></svg>
+                <svg class="cart-button" style="margin:20px 0px 0px 0px;" fill="orange" @onclick="Show" id="Cart" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.333 8.701l-7.837 4.262s-1.339 5.254-3.497 8.604l2.419 2.433c3.314-2.133 8.604-3.511 8.604-3.511l4.263-7.837-3.952-3.951zm-1.664 10.091c-1.241.365-3.64 1.131-5.915 2.207l1.806-1.806c.348-.349.8-.569 1.288-.63.647-.081 1.113-.63 1.113-1.263 0-.703-.569-1.275-1.275-1.275-.637 0-1.183.471-1.263 1.113-.06.487-.281.94-.629 1.288l-1.779 1.779c1.072-2.274 1.825-4.652 2.184-5.891l5.778-3.143 1.838 1.837-3.146 5.784zm2.345-12.252s2.148-3.969 3.475-6.54l8.511 8.511c-2.582 1.321-6.556 3.459-6.556 3.459l-5.43-5.43z" /></svg>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="reviews-div">
+       <span style="font-family:'Circe-B';font-size:35px;">Отзывы</span>
+        @foreach (var item in DBService.reviews.Where(x => x.Dakimakura.ID == daki.ID))
+        {
+            <div class="review">
+                <div class="review-h">
+                    <div>
+                        <span>@DBService.clients.FirstOrDefault(x=>x.ID == item.Client.ID).Login</span>
+                    </div>
+                    <div>
+                        <span>@(item.ReviewDateTime.Date.ToString().Split(' ')[0])</span>
+                    </div>
+                </div>
+                <hr>
+                <div class="review-text">
+                    <span>@item.Text</span>
+                </div>
+            </div>
+        }
+
+    </div>
+
+    <RewiewForm @ref="popupWindow" OnPurchase="Submit">
+        <div class="simple-form" >
+
+
+            <div class="form-group">
+                <label class="confirmation-text-h" style="margin-bottom:30px;">New Review</label>
+                <textarea @bind="ReviewText" class="confirmation-text" style="width:100%;min-height:300px; padding:10px 10px 10px 10px;"></textarea>
+
+                <div style="display:flex; justify-content:space-between;margin-left:10%;margin-right:10%; margin-bottom:20px;">
+                    <svg @onclick="(()=>Click(1))" @onmouseout="(()=>UnHover(1))" @onmouseover="(()=>Hover(1))" fill=@starStyles[0] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                    <svg @onclick="(()=>Click(2))" @onmouseout="(()=>UnHover(2))" @onmouseover="(()=>Hover(2))" fill=@starStyles[1] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                    <svg @onclick="(()=>Click(3))" @onmouseout="(()=>UnHover(3))" @onmouseover="(()=>Hover(3))" fill=@starStyles[2] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                    <svg @onclick="(()=>Click(4))" @onmouseout="(()=>UnHover(4))" @onmouseover="(()=>Hover(4))" fill=@starStyles[3] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                    <svg @onclick="(()=>Click(5))" @onmouseout="(()=>UnHover(5))" @onmouseover="(()=>Hover(5))" fill=@starStyles[4] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+
+
+                </div>
+
+            </div>
+
+
+            <button @onclick="Submit" class="btnXA">Submit</button>
+            <button @onclick="Close" class="btnXB">Exit</button>
+
+        </div>
+    </RewiewForm>
+
+
+</div>
 
 
 @code {
     [Parameter] public string ID { get; set; }
 
-    int a = 0;
+    RewiewForm popupWindow;
+
+    Dakimakura daki;
+    ToastParameters _toastParameters;
+
+    List<string> starStyles = new List<string> { "orange", "gray", "gray", "gray", "gray" };
+    List<bool> starLock = new List<bool> { true, false, false, false, false };
+
+    string ReviewText = string.Empty;
+    int ReviewRating = 1;
 
     protected override void OnParametersSet()
     {
-         a= int.Parse(ID);
+        daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
+
+    }
+
+    private void Show()
+    {
+        popupWindow.Show();
+    }
+
+    private void Submit()
+    {
+        DBService.AddReview(daki.ID, ReviewText, ReviewRating, AppState.UserName);
+
+        Close();
+        _toastParameters.Add(nameof(MyToastComponent.Title), "Review successfuly sent");
+        toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+    }
+
+    private void AddToCart()
+    {
+        _toastParameters.Add(nameof(MyToastComponent.Title), "Item added to cart");
+        toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+
+    }
+
+    private void Hover(int id)
+    {
+        for (int i = 0; i < id; i++)
+        {
+            starStyles[i] = "orange";
+        }
+    }
+
+    private void UnHover(int id)
+    {
+        for (int i = 0; i < id; i++)
+        {
+            if (!starLock[i])
+                starStyles[i] = "gray";
+        }
+    }
+
+    private void Click(int id)
+    {
+        for (int i = 0; i < id; i++)
+        {
+            starLock[i] = true;
+        }
+        for (int i = id; i < 5; i++)
+        {
+            starLock[i] = false;
+            starStyles[i] = "gray";
+        }
+        ReviewRating = id;
+    }
+
+    private void Close()
+    {
+        starStyles = new List<string> { "orange", "gray", "gray", "gray", "gray" };
+        starLock = new List<bool> { true, false, false, false, false };
+        ReviewText = string.Empty;
+        ReviewRating = 1;
+        popupWindow.Hide();
+    }
+
+    protected override void OnInitialized()
+    {
+        _toastParameters = new ToastParameters();
+
     }
 }

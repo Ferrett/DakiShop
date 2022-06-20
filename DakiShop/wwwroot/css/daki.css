@@ -1,0 +1,73 @@
+﻿
+
+.daki-main
+{
+    display:flex;
+    justify-content:space-between;
+        
+}
+
+.daki-card {
+    width: 27%;
+}
+
+.daki-image {
+    background-color: white;
+    height: 650px;
+    max-width: 450px;
+    object-fit: contain;
+    border: 4px solid #c094b3;
+    border-radius: 30px;
+    width: auto;
+}
+
+.daki-desc {
+    width: 30%;
+    border: 4px solid #c094b3;
+    background-color: white;
+    margin-right: 20%;
+    padding: 20px;
+    border-radius: 30px;
+    padding: 20px 60px 20px 60px;
+    height: auto;
+}
+
+.daki-desc-line {
+    justify-content: space-between;
+    font-size: 25px;
+    font-family: 'Circe-R';
+    display: flex;
+    margin-top: 35px;
+    
+}
+
+.daki-desc-line2 {
+    font-size: 30px;
+    font-family: 'Circe-B';
+}
+
+.reviews-div {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+}
+
+.review {
+    border: 4px solid #c094b3;
+    margin-bottom: 30px;
+    background-color: white;
+    border-radius: 15px;
+    padding: 25px 35px 15px 35px;
+}
+.review-h {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Circe-B';
+    font-size: 20px;
+}
+
+.review-text {
+    display: flex;
+    justify-content: space-between;
+}

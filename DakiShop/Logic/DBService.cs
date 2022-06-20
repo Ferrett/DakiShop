@@ -8,10 +8,14 @@ namespace DakiShop.Logic
         public static List<Dakimakura> dakimakuras { get; set; } = new List<Dakimakura>();
         public static List<Category> categories { get; set; } = new List<Category>();
         public static List<Manufacturer> manufacturers { get; set; } = new List<Manufacturer>();
+        public static List<Review> reviews { get; set; } = new List<Review>();
+        public static List<Client> clients { get; set; } = new List<Client>();
+
         public static void InitDB()
         {
             using (DBContext db = new DBContext())
             {
+                UpdateData();
                 db.SaveChanges();
             }
         }
@@ -22,25 +26,26 @@ namespace DakiShop.Logic
             {
                 db.Dakimakura.Add(new Dakimakura
                 {
-                    Category = db.Category.FirstOrDefault(x=>x.ID==categoryID)!,
-                    ImagePath =imagePath ,
+                    Category = db.Category.FirstOrDefault(x => x.ID == categoryID)!,
+                    ImagePath = imagePath,
                     Name = name,
                     Price = price,
                     Size = size,
                     Filler = filler,
-                    Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID ==manufacturerID )!,
+                    Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == manufacturerID)!,
                     PurchasedNumber = 0,
                     Rating = 0
                 });
                 db.SaveChanges();
             }
+            UpdateData();
         }
 
-        public static void EditDakimakura(int dakiID,int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
+        public static void EditDakimakura(int dakiID, int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
-                var d = db.Dakimakura.Where(x=>x.ID == dakiID).First();
+                var d = db.Dakimakura.Where(x => x.ID == dakiID).First();
                 d.Category = db.Category.FirstOrDefault(x => x.ID == categoryID)!;
                 d.ImagePath = imagePath;
                 d.Name = name;
@@ -53,15 +58,42 @@ namespace DakiShop.Logic
 
                 db.SaveChanges();
             }
+            UpdateData();
         }
 
-        public static void AddRootUser(string login, string email, string password)
+
+        public static void AddReview(int dakiID, string text, int rating, string userName)
         {
             using (DBContext db = new DBContext())
             {
-                db.Client.Add(new Client { Login = login.ToLower(), Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = true });
+                db.Review.Add(new Review
+                {
+                    Dakimakura = db.Dakimakura.Where(x => x.ID == dakiID).First(),
+                    Text = text,
+                    Rating = rating,
+                    ReviewDateTime = DateTime.Now,
+                    Client = db.Client.FirstOrDefault(x => x.Login.ToLower().Equals(userName.ToLower()))!
+                });
                 db.SaveChanges();
             }
+
+            UpdateData();
+        }
+        public static void AddRootUser(string login, string email, string password, string avaPath)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Client.Add(new Client
+                {
+                    Login = login.ToLower(),
+                    Email = email.ToLower(),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()),
+                    IsAdmin = true,
+                    AvaPath = avaPath
+                });
+                db.SaveChanges();
+            }
+            UpdateData();
         }
 
         public static bool GetCurrentUserRoot(string login)
@@ -69,13 +101,13 @@ namespace DakiShop.Logic
             using (DBContext db = new DBContext())
             {
                 return db.Client.ToList().Find(x => x.Login.Equals(login))!.IsAdmin;
-            } 
+            }
         }
         public static Category GetCategoryByName(string name)
         {
             using (DBContext db = new DBContext())
             {
-                return db.Category.ToList().Find(x=>x.Name.Equals(name))!;
+                return db.Category.ToList().Find(x => x.Name.Equals(name))!;
             }
         }
 
@@ -89,11 +121,13 @@ namespace DakiShop.Logic
 
         public static void UpdateData()
         {
-            using(DBContext db = new DBContext())
+            using (DBContext db = new DBContext())
             {
                 dakimakuras = db.Dakimakura.ToList();
                 categories = db.Category.ToList();
                 manufacturers = db.Manufacturer.ToList();
+                reviews = db.Review.ToList();
+                clients = db.Client.ToList();
             }
         }
 
@@ -104,6 +138,7 @@ namespace DakiShop.Logic
                 db.Client.Add(new Client { Login = login.ToLower(), Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false });
                 db.SaveChanges();
             }
+            UpdateData();
         }
         public static bool IsUserExists(string login)
         {
@@ -149,13 +184,18 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                if(categoryID ==0)
-                    return db.Dakimakura.ToList().MaxBy(x => x.Price).Price;
+                if (db.Dakimakura.ToList().Count > 0)
+                {
+                    if (categoryID == 0)
+                        return db.Dakimakura.ToList().MaxBy(x => x.Price).Price;
 
-                if (db.Dakimakura.Where(x => x.Category.ID == categoryID).Count() == 0)
+                    if (db.Dakimakura.Where(x => x.Category.ID == categoryID).Count() == 0)
+                        return 0;
+
+                    return db.Dakimakura.Where(x => x.Category.ID == categoryID).ToList().MaxBy(x => x.Price).Price;
+                }
+                else
                     return 0;
-
-                return db.Dakimakura.Where(x => x.Category.ID == categoryID).ToList().MaxBy(x => x.Price).Price;
             }
         }
 
@@ -172,9 +212,10 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                db.Category.Add(new Category { Name = name});
+                db.Category.Add(new Category { Name = name });
                 db.SaveChanges();
             }
+            UpdateData();
         }
         public static bool IsDakimakuraExists(string name)
         {
@@ -212,13 +253,14 @@ namespace DakiShop.Logic
                 db.Manufacturer.Add(new Manufacturer { Name = name });
                 db.SaveChanges();
             }
+            UpdateData();
         }
 
         public static bool IsManufacturerUsed(int id)
         {
             using (DBContext db = new DBContext())
             {
-                if(db.Dakimakura.Any(x=>x.Manufacturer.ID == id))
+                if (db.Dakimakura.Any(x => x.Manufacturer.ID == id))
                     return true;
 
                 return false;
@@ -229,10 +271,11 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                db.Manufacturer.Remove(db.Manufacturer.Where(x => x.ID == id).First()); 
+                db.Manufacturer.Remove(db.Manufacturer.Where(x => x.ID == id).First());
 
                 db.SaveChanges();
             }
+            UpdateData();
         }
 
         public static bool IsCategoryUsed(int id)
@@ -244,6 +287,7 @@ namespace DakiShop.Logic
 
                 return false;
             }
+            
         }
 
         public static void DeleteCategory(int id)
@@ -252,10 +296,11 @@ namespace DakiShop.Logic
             {
                 db.Category.Remove(db.Category.Where(x => x.ID == id).First());
 
-               
-            
+
+
                 db.SaveChanges();
             }
+            UpdateData();
         }
 
         public static void DeleteDakimakura(int id)
@@ -268,6 +313,7 @@ namespace DakiShop.Logic
 
                 db.SaveChanges();
             }
+            UpdateData();
         }
     }
 }

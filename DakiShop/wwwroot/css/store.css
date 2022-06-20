@@ -144,8 +144,6 @@
     max-height: 280px;
     object-fit:contain;
     /*min-height: 280px;*/
-
-    
 }
 
 .card-title {
@@ -174,6 +172,7 @@
     font-family: 'Circe-B';
     font-size: 25px;
     margin-top: 10px;
+    margin-left:10px;
 }
 
 .purchase-segment {
