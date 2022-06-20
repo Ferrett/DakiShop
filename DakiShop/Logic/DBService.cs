@@ -55,7 +55,6 @@ namespace DakiShop.Logic
                 d.Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == manufacturerID)!;
 
 
-
                 db.SaveChanges();
             }
             UpdateData();
@@ -135,7 +134,7 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                db.Client.Add(new Client { Login = login.ToLower(), Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false });
+                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvaPath= "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
                 db.SaveChanges();
             }
             UpdateData();
@@ -154,9 +153,10 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Login == login.ToLower() && BCrypt.Net.BCrypt.Verify(password, x.PasswordHash)))
+                if (db.Client.ToList().Any(x => x.Login.ToLower() == login.ToLower() && BCrypt.Net.BCrypt.Verify(password, x.PasswordHash)))
                     return true;
             }
+
             return false;
         }
 
@@ -164,7 +164,7 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Login == login))
+                if (db.Client.ToList().Any(x => x.Login.ToLower() == login.ToLower()))
                     return true;
             }
             return false;
@@ -311,6 +311,22 @@ namespace DakiShop.Logic
 
 
 
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
+
+        public static void UpdateDakiRating(int dakiID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Dakimakura.Where(x => x.ID == dakiID).First();
+
+
+                decimal a = db.Review.Where(x => x.Dakimakura.ID == dakiID).Sum(x => x.Rating);
+                decimal b = db.Review.Where(x => x.Dakimakura.ID == dakiID).Count();
+                decimal c = a / b;
+                d.Rating = c;
                 db.SaveChanges();
             }
             UpdateData();

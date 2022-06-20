@@ -6,11 +6,11 @@
 }
 
 body {
-    font-family: 'Circe-R';
+/*    font-family: 'Circe-R';
     background-size: 200% 100% !important;
     animation: move 30s ease infinite;
-    transform: translate3d(0, 0, 0);
-    background: rgb(255,229,229);
+    transform: translate3d(0, 0, 0);*/
+    background: #fff1f1;
     min-height: 100vh;
 }
 

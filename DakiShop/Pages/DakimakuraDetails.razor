@@ -67,7 +67,10 @@
 
 
     <div class="reviews-div">
-       <span style="font-family:'Circe-B';font-size:35px;">Отзывы</span>
+        @if (DBService.reviews.Where(x => x.Dakimakura.ID == daki.ID).Count() > 0)
+        {
+            <span style="font-family:'Circe-B';font-size:35px;">Отзывы</span>
+        }
         @foreach (var item in DBService.reviews.Where(x => x.Dakimakura.ID == daki.ID))
         {
             <div class="review">
@@ -75,54 +78,70 @@
                     <div>
                         <span>@DBService.clients.FirstOrDefault(x=>x.ID == item.Client.ID).Login</span>
                     </div>
+                    <div style="margin-bottom:10px;">
+                        <svg fill="orange" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                        <svg fill=@(item.Rating>=2?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                        <svg fill=@(item.Rating>=3?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                        <svg fill=@(item.Rating>=4?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                        <svg fill=@(item.Rating==5?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+
+                    </div>
                     <div>
                         <span>@(item.ReviewDateTime.Date.ToString().Split(' ')[0])</span>
                     </div>
                 </div>
-                <hr>
-                <div class="review-text">
-                    <span>@item.Text</span>
-                </div>
+                @if (!string.IsNullOrWhiteSpace(ReviewText))
+                {
+                    <hr>
+                    <div class="review-text">
+                        <span>@item.Text</span>
+                    </div>
+                }
             </div>
         }
 
     </div>
 
-    <RewiewForm @ref="popupWindow" OnPurchase="Submit">
-        <div class="simple-form" >
-
-
-            <div class="form-group">
-                <label class="confirmation-text-h" style="margin-bottom:30px;">New Review</label>
-                <textarea @bind="ReviewText" class="confirmation-text" style="width:100%;min-height:300px; padding:10px 10px 10px 10px;"></textarea>
-
-                <div style="display:flex; justify-content:space-between;margin-left:10%;margin-right:10%; margin-bottom:20px;">
-                    <svg @onclick="(()=>Click(1))" @onmouseout="(()=>UnHover(1))" @onmouseover="(()=>Hover(1))" fill=@starStyles[0] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                    <svg @onclick="(()=>Click(2))" @onmouseout="(()=>UnHover(2))" @onmouseover="(()=>Hover(2))" fill=@starStyles[1] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                    <svg @onclick="(()=>Click(3))" @onmouseout="(()=>UnHover(3))" @onmouseover="(()=>Hover(3))" fill=@starStyles[2] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                    <svg @onclick="(()=>Click(4))" @onmouseout="(()=>UnHover(4))" @onmouseover="(()=>Hover(4))" fill=@starStyles[3] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                    <svg @onclick="(()=>Click(5))" @onmouseout="(()=>UnHover(5))" @onmouseover="(()=>Hover(5))" fill=@starStyles[4] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-
-
-                </div>
-
-            </div>
-
-
-            <button @onclick="Submit" class="btnXA">Submit</button>
-            <button @onclick="Close" class="btnXB">Exit</button>
-
-        </div>
-    </RewiewForm>
 
 
 </div>
 
+<RewiewForm @ref="popupWindow" OnPurchase="Submit">
+
+    <div class="simple-form">
+
+
+        <div class="form-group">
+            <label class="confirmation-text-h" style="margin-bottom:30px;">New Review</label>
+            <textarea @bind="ReviewText" class="confirmation-text" style="width:100%;min-height:300px; padding:10px 10px 10px 10px;"></textarea>
+
+            <div style="display:flex; justify-content:center;margin-left:10%;margin-right:10%; margin-bottom:20px;">
+                <svg @onclick="(()=>Click(1))" @onmouseout="(()=>UnHover(1))" @onmouseover="(()=>Hover(1))" fill=@starStyles[0] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                <svg @onclick="(()=>Click(2))" @onmouseout="(()=>UnHover(2))" @onmouseover="(()=>Hover(2))" fill=@starStyles[1] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                <svg @onclick="(()=>Click(3))" @onmouseout="(()=>UnHover(3))" @onmouseover="(()=>Hover(3))" fill=@starStyles[2] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                <svg @onclick="(()=>Click(4))" @onmouseout="(()=>UnHover(4))" @onmouseover="(()=>Hover(4))" fill=@starStyles[3] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                <svg @onclick="(()=>Click(5))" @onmouseout="(()=>UnHover(5))" @onmouseover="(()=>Hover(5))" fill=@starStyles[4] xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+            </div>
+
+        </div>
+
+
+        <button @onclick="Submit" class="btnXA">Submit</button>
+        <button @onclick="Close" class="btnXB">Exit</button>
+
+    </div>
+
+</RewiewForm>
+
+
+
+
 
 @code {
+    RewiewForm popupWindow;
+
     [Parameter] public string ID { get; set; }
 
-    RewiewForm popupWindow;
 
     Dakimakura daki;
     ToastParameters _toastParameters;
@@ -151,6 +170,8 @@
         Close();
         _toastParameters.Add(nameof(MyToastComponent.Title), "Review successfuly sent");
         toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+        DBService.UpdateDakiRating(daki.ID);
+        daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
     }
 
     private void AddToCart()
