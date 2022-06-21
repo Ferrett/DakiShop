@@ -1,14 +1,13 @@
 ﻿@using DakiShop.Logic
 @using RaportBlazorServer.Logic
 @using System.Reflection
-
-
-@inject AppState AppState
+@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject NavigationManager NavManager;
 @page "/adminpanel"
 
 <PageTitle>Admin Panel</PageTitle>
 
-@if (AppState.UserRoot)
+@if (root == "true")
 {
     <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
     <button class="btnAA" @onclick="(() => Show(2))">Добавить Категорию</button>
@@ -20,10 +19,6 @@
 
     <button class="btnC" @onclick="(() => Show(7))">Изменить Дакимакуру</button>
 
-}
-else
-{
-    <h2>ПОШЁЛ НАХУЙ ДОЛБАЁБ</h2>
 }
 
 <AdminPanelForm @ref="popupWindow" OnPurchase="Submit">
@@ -363,6 +358,18 @@ else
     //Удалить Категорию        5
     //Удалить Производителя    6
     //Изменить Дакимакуру      7
+
+    string root = "false";
+
+    protected async override void OnInitialized()
+    {
+        root = await sessionL.GetItemAsync<string>("root");
+
+        if(root=="false")
+            NavManager.NavigateTo("/");
+
+        StateHasChanged();
+    }
 
     private void Check()
     {

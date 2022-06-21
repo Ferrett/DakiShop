@@ -4,7 +4,9 @@
 @using DakiShop.Pages
 @inject IJSRuntime JSRuntime
 @inject IToastService toastService
-@inject AppState AppState
+@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject NavigationManager NavManager
+
 <PageTitle>@daki.Name</PageTitle>
 
 
@@ -13,7 +15,7 @@
     <div class="daki-main">
         <div style="justify-content:space-between; margin-left:20%;">
             <div>
-                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name + (AppState.UserRoot?$" [ID {daki.ID}]":string.Empty))</span>
+                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name+ (root=="true"? $" [ID {daki.ID}]":string.Empty))</span>
             </div>
 
             <div class="daki-card" style="margin-top:15px;">
@@ -75,7 +77,7 @@
         {
             <div class="review">
                 <div class="review-h">
-                    <div>
+                    <div style="margin-top:5px;">
                         <span>@DBService.clients.FirstOrDefault(x=>x.ID == item.Client.ID).Login</span>
                     </div>
                     <div style="margin-bottom:10px;">
@@ -86,15 +88,15 @@
                         <svg fill=@(item.Rating==5?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
 
                     </div>
-                    <div>
+                    <div style="margin-top:5px;">
                         <span>@(item.ReviewDateTime.Date.ToString().Split(' ')[0])</span>
                     </div>
                 </div>
-                @if (!string.IsNullOrWhiteSpace(ReviewText))
+                @if (!string.IsNullOrWhiteSpace(item.Text))
                 {
                     <hr>
                     <div class="review-text">
-                        <span>@item.Text</span>
+                        <span style="text-align:center">@item.Text</span>
                     </div>
                 }
             </div>
@@ -160,12 +162,19 @@
 
     private void Show()
     {
-        popupWindow.Show();
+        if (name != null)
+        {
+            popupWindow.Show();
+        }
+        else
+        {
+            NavManager.NavigateTo("/authentication/",true);
+        }
     }
 
     private void Submit()
     {
-        DBService.AddReview(daki.ID, ReviewText, ReviewRating, AppState.UserName);
+        DBService.AddReview(daki.ID, ReviewText, ReviewRating,name);
 
         Close();
         _toastParameters.Add(nameof(MyToastComponent.Title), "Review successfuly sent");
@@ -176,8 +185,15 @@
 
     private void AddToCart()
     {
-        _toastParameters.Add(nameof(MyToastComponent.Title), "Item added to cart");
-        toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+        if(name != null)
+        {
+            _toastParameters.Add(nameof(MyToastComponent.Title), "Item added to cart");
+            toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+        }
+        else
+        {
+            NavManager.NavigateTo("/authentication/",true);
+        }
 
     }
 
@@ -221,9 +237,14 @@
         popupWindow.Hide();
     }
 
-    protected override void OnInitialized()
+    string root = "false";
+    string name;
+    protected override async void OnInitialized()
     {
         _toastParameters = new ToastParameters();
+        root = await sessionL.GetItemAsync<string>("root");
+        name = await sessionL.GetItemAsync<string>("name");
+        StateHasChanged();
 
     }
 }

@@ -17,7 +17,7 @@ builder.Services.AddServerSideBlazor();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 builder.Services.AddBlazoredSessionStorage();
 builder.Services.AddBlazoredLocalStorage();
-builder.Services.AddSingleton<AppState>();
+
 
 builder.Services.AddBlazoredToast();
 

@@ -14,11 +14,11 @@
 .daki-image {
     background-color: white;
     height: 650px;
-    max-width: 450px;
+    width: 450px;
     object-fit: contain;
     border: 4px solid #c094b3;
     border-radius: 30px;
-    width: auto;
+   /* width: auto;*/
 }
 
 .daki-desc {
@@ -70,4 +70,6 @@
 .review-text {
     display: flex;
     justify-content: space-between;
+    font-family: 'Circe-R';
+    
 }

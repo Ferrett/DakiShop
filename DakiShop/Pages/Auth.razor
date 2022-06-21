@@ -6,7 +6,7 @@
 @inject Blazored.SessionStorage.ISessionStorageService sessionS;
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
-@inject AppState AppState
+
 
 
 <PageTitle>Auth</PageTitle>
@@ -86,19 +86,24 @@
                 DBService.AddNewUser(login, email, pass);
 
             SaveSession();
-            NavManager.NavigateTo("/");
+            TT();
+            NavManager.NavigateTo("/",true);
         }
+    }
+
+    [CascadingParameter]
+    public EventCallback btn_clicked { get; set; }
+
+    public void TT()
+    {
+        btn_clicked.InvokeAsync();
     }
 
     public async void SaveSession()
     {
-        await sessionL.SetItemAsync("name3",login);
-        await sessionL.SetItemAsync("root3",DBService.GetCurrentUserRoot(login)==false?"false":"true");
+        await sessionL.SetItemAsync("name",login);
+        await sessionL.SetItemAsync("root",login=="admin"?"true":"false");
 
-        AppState.UserRoot = DBService.GetCurrentUserRoot(login);
-        AppState.UserName = login;
-
-       
         StateHasChanged();
     }
 }

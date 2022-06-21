@@ -3,13 +3,14 @@
 @inherits LayoutComponentBase
 @inject Blazored.LocalStorage.ILocalStorageService sessionL;
 @inject Blazored.SessionStorage.ISessionStorageService sessionS;
-@inject AppState AppState
-@implements IDisposable
+@inject IJSRuntime JSRuntime
 
 @using DakiShop.Pages
 <BlazoredToasts Position="ToastPosition.BottomRight" />
 
 <PageTitle>DakiShop</PageTitle>
+
+
 
 <div class="page">
     <main>
@@ -25,7 +26,7 @@
                     <button class="common-button">Buy Dakimakura</button>
                 </NavLink>
 
-                @if (AppState.UserRoot)
+                @if (root == "true")
                 {
                     <NavLink href="/adminpanel">
                         <button class="common-button last-button">Admin Panel</button>
@@ -36,53 +37,65 @@
 
                 <NavLink href="/cart">
                     @*<svg class="cart-button" id="Cart" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 19.5c0 .829-.672 1.5-1.5 1.5s-1.5-.671-1.5-1.5c0-.828.672-1.5 1.5-1.5s1.5.672 1.5 1.5zm3.5-1.5c-.828 0-1.5.671-1.5 1.5s.672 1.5 1.5 1.5 1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5zm-10.563-5l-2.937-7h16.812l-1.977 7h-11.898zm11.233-5h-11.162l1.259 3h9.056l.847-3zm5.635-5l-3.432 12h-12.597l.839 2h13.239l3.474-12h1.929l.743-2h-4.195z" /></svg>*@
-                        <svg class="cart-button" id="Cart"xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 3l-.743 2h-1.929l-3.474 12h-13.239l-4.615-11h16.812l-.564 2h-13.24l2.937 7h10.428l3.432-12h4.195zm-15.5 15c-.828 0-1.5.672-1.5 1.5 0 .829.672 1.5 1.5 1.5s1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5zm6.9-7-1.9 7c-.828 0-1.5.671-1.5 1.5s.672 1.5 1.5 1.5 1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5z"/></svg>
-                    </NavLink>
+                    <svg class="cart-button" id="Cart" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 3l-.743 2h-1.929l-3.474 12h-13.239l-4.615-11h16.812l-.564 2h-13.24l2.937 7h10.428l3.432-12h4.195zm-15.5 15c-.828 0-1.5.672-1.5 1.5 0 .829.672 1.5 1.5 1.5s1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5zm6.9-7-1.9 7c-.828 0-1.5.671-1.5 1.5s.672 1.5 1.5 1.5 1.5-.671 1.5-1.5c0-.828-.672-1.5-1.5-1.5z" /></svg>
+                </NavLink>
 
                 <NavLink href="/authentication">
-                    <button class="registration-button">@AppState.UserName</button>
+                    <button class="registration-button">@(name==null?"Log In":name)</button>
                 </NavLink>
             </div>
 
         </div>
 
-        <article>
+       <CascadingValue Value=btn_clicked >
             @Body
-        </article>
+        </CascadingValue>
     </main>
 </div>
 
 
-@code{
-
+@code {
     //  Session
     #region Session
+
+    string name;
+    string root = "false";
 
     public async void ClearSession()
     {
         await sessionL.ClearAsync();
     }
 
-
-
     protected async override void OnInitialized()
     {
-        AppState.OnChange += StateHasChanged;
+            name = await sessionL.GetItemAsync<string>("name");
+            root = await sessionL.GetItemAsync<string>("root");
 
-        var a = await  sessionL.GetItemAsync<string>("name3");
-        AppState.UserName = a == null ? "Log In" : a;
-
-        var b = await  sessionL.GetItemAsync<string>("root3");
-        AppState.UserRoot = a == null ? false : (a.Equals("false") ? false:true );
-
-  
         StateHasChanged();
     }
 
-
-    public void Dispose()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        AppState.OnChange -= StateHasChanged;
+        if (firstRender)
+        {
+            name = await sessionL.GetItemAsync<string>("name");
+            root = await sessionL.GetItemAsync<string>("root");
+
+            //await sessionL.ClearAsync();
+            StateHasChanged();
+        }
     }
-    #endregion   
+
+
+
+    EventCallback btn_clicked => EventCallback.Factory.Create(this, Test);
+
+    public async void Test()
+    {
+        name = await sessionL.GetItemAsync<string>("name");
+        root = await sessionL.GetItemAsync<string>("root");
+
+        StateHasChanged();
+    }
+    #endregion
 }

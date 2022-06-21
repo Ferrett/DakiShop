@@ -6,7 +6,7 @@
 
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
-@inject AppState AppState
+
 
 <PageTitle>Store</PageTitle>
 
@@ -62,7 +62,7 @@
                         </div>
                                 <hr>
                         <div>
-                            <div class="card-title">@(item.Name + (AppState.UserRoot?$" [ID {item.ID}]":string.Empty))</div>
+                            <div class="card-title">@(item.Name + (root=="true"? $" [ID {item.ID}]":string.Empty))</div>
 
                             <div class="card-info">
                                 <div style="width:70%;">
@@ -134,8 +134,11 @@
         StateHasChanged();
     }
 
-    protected override void OnInitialized()
+    string root = "false";
+
+    protected override async void OnInitialized()
     {
+        root = await sessionL.GetItemAsync<string>("root");
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
     }
@@ -145,6 +148,7 @@
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
+            
             StateHasChanged();
         }
     }
