@@ -73,3 +73,24 @@
     font-family: 'Circe-R';
     
 }
+
+
+
+.rev-like{
+    background-color: #68c15a;
+    color: white;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    padding: 12px;
+    width: auto;
+    margin: 10px 10px 10px 10px;
+    transition: 0.3s ease;
+}
+
+.rev-like {
+    padding: 15px;
+    background-color: #6ddd5b;
+    transition: 0.3s ease;
+    transform: scale(0.96);
+    cursor: pointer;
+}

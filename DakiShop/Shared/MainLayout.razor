@@ -1,8 +1,8 @@
 ﻿@using Blazored.Toast.Configuration
 @using DakiShop.Logic
 @inherits LayoutComponentBase
-@inject Blazored.LocalStorage.ILocalStorageService sessionL;
-@inject Blazored.SessionStorage.ISessionStorageService sessionS;
+@inject Blazored.LocalStorage.ILocalStorageService session;
+
 @inject IJSRuntime JSRuntime
 
 @using DakiShop.Pages
@@ -16,7 +16,9 @@
     <main>
         <div class="header">
             <div>
-                <h1 class="logo noselect">DakimakuraShop</h1>
+                <NavLink href="/">
+                    <h1 class="logo noselect">DakimakuraShop</h1>
+                </NavLink>
             </div>
             <div class="buttons-container">
             </div>
@@ -26,7 +28,7 @@
                     <button class="common-button">Buy Dakimakura</button>
                 </NavLink>
 
-                @if (root == "true")
+                @if (root)
                 {
                     <NavLink href="/adminpanel">
                         <button class="common-button last-button">Admin Panel</button>
@@ -41,13 +43,13 @@
                 </NavLink>
 
                 <NavLink href="/authentication">
-                    <button class="registration-button">@(name==null?"Log In":name)</button>
+                    <button class="registration-button">@(cocks==null?"Log In":cocks)</button>
                 </NavLink>
             </div>
 
         </div>
 
-       <CascadingValue Value=btn_clicked >
+        <CascadingValue Value=btn_clicked>
             @Body
         </CascadingValue>
     </main>
@@ -56,46 +58,42 @@
 
 @code {
     //  Session
-    #region Session
 
-    string name;
-    string root = "false";
+
+    string name = "123";
+    bool root = false;
 
     public async void ClearSession()
     {
-        await sessionL.ClearAsync();
+        await session.ClearAsync();
     }
 
     protected async override void OnInitialized()
     {
-            name = await sessionL.GetItemAsync<string>("name");
-            root = await sessionL.GetItemAsync<string>("root");
-
-        StateHasChanged();
+        //ClearSession();
+        Test();
     }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            name = await sessionL.GetItemAsync<string>("name");
-            root = await sessionL.GetItemAsync<string>("root");
-
-            //await sessionL.ClearAsync();
-            StateHasChanged();
-        }
-    }
-
 
 
     EventCallback btn_clicked => EventCallback.Factory.Create(this, Test);
-
+    string cocks;
     public async void Test()
     {
-        name = await sessionL.GetItemAsync<string>("name");
-        root = await sessionL.GetItemAsync<string>("root");
-
+        name = await session.GetItemAsync<string>("name");
+        if (name != null) {
+            try
+            {
+                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
+                cocks = StringCipher.Decrypt(name, "name");
+            }
+            catch (Exception)
+            {
+                await session.ClearAsync();
+                root = false;
+                cocks = null;
+            }
+           
+        }
         StateHasChanged();
     }
-    #endregion
 }

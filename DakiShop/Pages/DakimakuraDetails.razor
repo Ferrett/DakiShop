@@ -4,7 +4,8 @@
 @using DakiShop.Pages
 @inject IJSRuntime JSRuntime
 @inject IToastService toastService
-@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject Blazored.LocalStorage.ILocalStorageService session;
+
 @inject NavigationManager NavManager
 
 <PageTitle>@daki.Name</PageTitle>
@@ -15,7 +16,7 @@
     <div class="daki-main">
         <div style="justify-content:space-between; margin-left:20%;">
             <div>
-                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name+ (root=="true"? $" [ID {daki.ID}]":string.Empty))</span>
+                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name+ (root==true? $"  [{daki.ID}]":string.Empty))</span>
             </div>
 
             <div class="daki-card" style="margin-top:15px;">
@@ -73,7 +74,7 @@
         {
             <span style="font-family:'Circe-B';font-size:35px;">Отзывы</span>
         }
-        @foreach (var item in DBService.reviews.Where(x => x.Dakimakura.ID == daki.ID))
+        @foreach (var item in (DBService.reviews.Where(x => x.Dakimakura.ID == daki.ID)).Reverse())
         {
             <div class="review">
                 <div class="review-h">
@@ -89,7 +90,7 @@
 
                     </div>
                     <div style="margin-top:5px;">
-                        <span>@(item.ReviewDateTime.Date.ToString().Split(' ')[0])</span>
+                        <span>@(item.ReviewDateTime.Date.ToLocalTime().ToString().Split(' ')[0])</span>
                     </div>
                 </div>
                 @if (!string.IsNullOrWhiteSpace(item.Text))
@@ -174,7 +175,7 @@
 
     private void Submit()
     {
-        DBService.AddReview(daki.ID, ReviewText, ReviewRating,name);
+        DBService.AddReview(daki.ID, ReviewText, ReviewRating,StringCipher.Decrypt(name, "name"));
 
         Close();
         _toastParameters.Add(nameof(MyToastComponent.Title), "Review successfuly sent");
@@ -237,13 +238,25 @@
         popupWindow.Hide();
     }
 
-    string root = "false";
+    bool root = false;
     string name;
     protected override async void OnInitialized()
     {
         _toastParameters = new ToastParameters();
-        root = await sessionL.GetItemAsync<string>("root");
-        name = await sessionL.GetItemAsync<string>("name");
+         name = await session.GetItemAsync<string>("name");
+
+        if (name != null) {
+            try
+            {
+                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
+            }
+            catch (Exception)
+            {
+                await session.ClearAsync();
+                NavManager.NavigateTo("/authentication/",true);
+            }
+           
+        }
         StateHasChanged();
 
     }

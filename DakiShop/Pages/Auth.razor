@@ -2,8 +2,8 @@
 @using DakiShop.Logic
 @using DakiShop.Models
 @using RaportBlazorServer.Logic
-@inject Blazored.LocalStorage.ILocalStorageService sessionL;
-@inject Blazored.SessionStorage.ISessionStorageService sessionS;
+@inject Blazored.LocalStorage.ILocalStorageService session;
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 
@@ -78,7 +78,7 @@
         return true;
     }
 
-    private void RegisterNewUser()
+    private async void RegisterNewUser()
     {
         if (UserValidation())
         {
@@ -86,7 +86,8 @@
                 DBService.AddNewUser(login, email, pass);
 
             SaveSession();
-            TT();
+
+            await btn_clicked.InvokeAsync();
             NavManager.NavigateTo("/",true);
         }
     }
@@ -94,15 +95,11 @@
     [CascadingParameter]
     public EventCallback btn_clicked { get; set; }
 
-    public void TT()
-    {
-        btn_clicked.InvokeAsync();
-    }
 
     public async void SaveSession()
     {
-        await sessionL.SetItemAsync("name",login);
-        await sessionL.SetItemAsync("root",login=="admin"?"true":"false");
+        await session.SetItemAsync("name", StringCipher.Encrypt(login, "name"));
+       
 
         StateHasChanged();
     }

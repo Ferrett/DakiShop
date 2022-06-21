@@ -1,8 +1,8 @@
 ﻿@page "/"
 @using DakiShop.Logic
 @using DakiShop.Models
-@inject Blazored.LocalStorage.ILocalStorageService sessionL;
-@inject Blazored.SessionStorage.ISessionStorageService sessionS;
+@inject Blazored.LocalStorage.ILocalStorageService session;
+
 
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
@@ -60,9 +60,9 @@
                         <div>
                             <img class="card-img" src=@item.ImagePath>
                         </div>
-                                <hr>
                         <div>
-                            <div class="card-title">@(item.Name + (root=="true"? $" [ID {item.ID}]":string.Empty))</div>
+                            <hr>
+                            <div class="card-title">@(item.Name + (root==true? $"  [{item.ID}]":string.Empty))</div>
 
                             <div class="card-info">
                                 <div style="width:70%;">
@@ -134,11 +134,26 @@
         StateHasChanged();
     }
 
-    string root = "false";
+    bool root = false;
+    string name;
 
     protected override async void OnInitialized()
     {
-        root = await sessionL.GetItemAsync<string>("root");
+        name = await session.GetItemAsync<string>("name");
+
+        if (name != null) {
+            try
+            {
+                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
+            }
+            catch (Exception)
+            {
+                await session.ClearAsync();
+                root = false;
+            }
+           
+        }
+
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
     }
@@ -148,7 +163,7 @@
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
-            
+
             StateHasChanged();
         }
     }

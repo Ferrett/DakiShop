@@ -1,13 +1,14 @@
 ﻿@using DakiShop.Logic
 @using RaportBlazorServer.Logic
 @using System.Reflection
-@inject Blazored.LocalStorage.ILocalStorageService sessionL;
+@inject Blazored.LocalStorage.ILocalStorageService session;
+
 @inject NavigationManager NavManager;
 @page "/adminpanel"
 
 <PageTitle>Admin Panel</PageTitle>
 
-@if (root == "true")
+@if (root ==true)
 {
     <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
     <button class="btnAA" @onclick="(() => Show(2))">Добавить Категорию</button>
@@ -359,13 +360,26 @@
     //Удалить Производителя    6
     //Изменить Дакимакуру      7
 
-    string root = "false";
-
+    bool root = false;
+    string name;
     protected async override void OnInitialized()
     {
-        root = await sessionL.GetItemAsync<string>("root");
+        name = await session.GetItemAsync<string>("name");
 
-        if(root=="false")
+        if (name != null) {
+            try
+            {
+                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
+            }
+            catch (Exception)
+            {
+
+                root = false;
+            }
+           
+        }
+
+        if(root==false)
             NavManager.NavigateTo("/");
 
         StateHasChanged();
