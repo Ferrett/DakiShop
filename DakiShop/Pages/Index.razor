@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using DakiShop.Logic
 @using DakiShop.Models
+@using DakiShop.Pages.Toasts
 @inject Blazored.LocalStorage.ILocalStorageService session;
 
 
@@ -141,7 +142,8 @@
     {
         name = await session.GetItemAsync<string>("name");
 
-        if (name != null) {
+        if (name != null)
+        {
             try
             {
                 root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
@@ -149,10 +151,16 @@
             catch (Exception)
             {
                 await session.ClearAsync();
-                root = false;
+                NavManager.NavigateTo("/authentication/", true);
             }
-           
+
         }
+        else
+        {
+            await session.ClearAsync();
+            //NavManager.NavigateTo("/authentication/", true);
+        }
+
 
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
@@ -167,4 +175,6 @@
             StateHasChanged();
         }
     }
+
+
 }

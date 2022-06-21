@@ -62,7 +62,7 @@
 }
 .review-h {
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     font-family: 'Circe-B';
     font-size: 20px;
 }
@@ -76,21 +76,41 @@
 
 
 
-.rev-like{
+.rev-like {
     background-color: #68c15a;
     color: white;
     border-radius: 10px;
     letter-spacing: 1px;
-    padding: 12px;
+    padding: 9px;
     width: auto;
     margin: 10px 10px 10px 10px;
     transition: 0.3s ease;
 }
 
-.rev-like {
-    padding: 15px;
+.rev-like:hover {
+    padding: 11px;
     background-color: #6ddd5b;
     transition: 0.3s ease;
     transform: scale(0.96);
     cursor: pointer;
 }
+
+.rev-del {
+    background-color: #C50000;
+    color: white;
+    border-radius: 10px;
+    letter-spacing: 1px;
+    padding: 9px;
+    width: auto;
+    margin: 10px 10px 0px 10px;
+    transition: 0.3s ease;
+    fill:white;
+}
+
+    .rev-del:hover {
+        padding: 11px;
+        background-color: #FB0000;
+        transition: 0.3s ease;
+        transform: scale(0.96);
+        cursor: pointer;
+    }

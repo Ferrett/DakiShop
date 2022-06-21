@@ -6,6 +6,7 @@
 @inject IJSRuntime JSRuntime
 
 @using DakiShop.Pages
+@using DakiShop.Pages.Toasts
 <BlazoredToasts Position="ToastPosition.BottomRight" />
 
 <PageTitle>DakiShop</PageTitle>
@@ -50,7 +51,9 @@
         </div>
 
         <CascadingValue Value=btn_clicked>
+
             @Body
+
         </CascadingValue>
     </main>
 </div>
@@ -71,16 +74,18 @@
     protected async override void OnInitialized()
     {
         //ClearSession();
-        Test();
+
+        Test(false);
     }
 
 
     EventCallback btn_clicked => EventCallback.Factory.Create(this, Test);
     string cocks;
-    public async void Test()
-    {
+    public async void Test(object a)
+    { 
         name = await session.GetItemAsync<string>("name");
-        if (name != null) {
+        if (name != null)
+        {
             try
             {
                 root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
@@ -92,8 +97,9 @@
                 root = false;
                 cocks = null;
             }
-           
+
         }
+       
         StateHasChanged();
     }
 }

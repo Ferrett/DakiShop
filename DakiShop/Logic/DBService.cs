@@ -71,6 +71,7 @@ namespace DakiShop.Logic
                     Text = text,
                     Rating = rating,
                     ReviewDateTime = DateTime.Now,
+                    Likes = 0,
                     Client = db.Client.FirstOrDefault(x => x.Login.ToLower().Equals(userName.ToLower()))!
                 });
                 db.SaveChanges();
@@ -327,6 +328,17 @@ namespace DakiShop.Logic
                 decimal b = db.Review.Where(x => x.Dakimakura.ID == dakiID).Count();
                 decimal c = a / b;
                 d.Rating = c;
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
+
+        public static void DeleteReview(int reviewID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                db.Review.Remove(db.Review.Where(x => x.ID == reviewID).First());
+
                 db.SaveChanges();
             }
             UpdateData();

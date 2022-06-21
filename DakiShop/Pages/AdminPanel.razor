@@ -1,14 +1,15 @@
 ﻿@using DakiShop.Logic
+@using DakiShop.Pages.Toasts
 @using RaportBlazorServer.Logic
 @using System.Reflection
 @inject Blazored.LocalStorage.ILocalStorageService session;
-
+@inject IToastService toastService
 @inject NavigationManager NavManager;
 @page "/adminpanel"
 
 <PageTitle>Admin Panel</PageTitle>
 
-@if (root ==true)
+@if (root == true)
 {
     <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
     <button class="btnAA" @onclick="(() => Show(2))">Добавить Категорию</button>
@@ -31,7 +32,7 @@
 
                 <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                    <input @bind-value="DakiImagePath" @bind-value:event="oninput"  type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiImagePath" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:center;">
@@ -95,16 +96,20 @@
         {
             <div class="form-group">
                 <label class="confirmation-text-h">Add Category</label><hr style="margin-bottom:30px;">
-                <label class="confirmation-text">Category Name</label>
-                <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                <div style="display:flex; justify-content:space-between; margin-top:15px;margin-left:15px;">
+                    <label class="confirmation-text" style="margin-top:10px; margin-left:15px;">Name</label>
+                    <input @bind="CategotyName" type="text" class="form-control" id="first-name" placeholder="Enter Category Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
             </div>
         }
         @if (ID == 3)
         {
             <div class="form-group">
                 <label class="confirmation-text-h">Add Manufacturer</label><hr style="margin-bottom:30px;">
-                <label class="confirmation-text">Manufacturer Name</label>
-                <input @bind="ManufacturerName" type="text" class="form-control" id="first-name" placeholder="Enter Manufacturer Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                <div style="display:flex; justify-content:space-between; margin-top:15px">
+                    <label class="confirmation-text" style="margin-top:10px; margin-left:15px;"> Name</label>
+                    <input @bind="ManufacturerName" type="text" class="form-control" id="first-name" placeholder="Enter Manufacturer Name" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div>
             </div>
         }
         @if (ID == 4)
@@ -189,7 +194,7 @@
             <div class="form-group">
                 <label class="confirmation-text-h">Delete Category</label><hr style="margin-bottom:30px;">
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Category</label>
+                    <label class="confirmation-text" style="margin-top:10px;margin-left:15px;">Category</label>
                     <div class="select">
                         <select @bind="CategoryID" id="format">
                             @foreach (var item in DBService.categories)
@@ -232,7 +237,7 @@
                 {
                     <div style="display:flex;justify-content:space-between;">
                         <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                        <input @bind-value="DakiImagePath" @bind-value:event="oninput"   type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiImagePath" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
 
                     <div style="display:flex; justify-content:center;">
@@ -288,7 +293,7 @@
 
                     <div style="display:flex; justify-content:space-between; margin-top:15px;">
                         <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                        <input @bind-value="DakiSize"  type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
                 }
             </div>
@@ -365,8 +370,11 @@
     protected async override void OnInitialized()
     {
         name = await session.GetItemAsync<string>("name");
+        _toastParameters3 = new ToastParameters();
+        _toastParameters3.Add(nameof(SuccessAdminPanel.Title), "Changes saved");
 
-        if (name != null) {
+        if (name != null)
+        {
             try
             {
                 root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
@@ -376,10 +384,14 @@
 
                 root = false;
             }
-           
+        }
+        else
+        {
+            await session.ClearAsync();
+            NavManager.NavigateTo("/authentication/", true);
         }
 
-        if(root==false)
+        if (root == false)
             NavManager.NavigateTo("/");
 
         StateHasChanged();
@@ -397,7 +409,7 @@
 
     private void CheckDakiID()
     {
-        if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) ||  !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
+        if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) || !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
         {
             ClearFields();
             regStyle = "error-auth-text";
@@ -483,10 +495,12 @@
             DBService.EditDakimakura(int.Parse(DakiID), CategoryID + 1, DakiImagePath, DakiName, int.Parse(DakiPrice), DakiSize, DakiFiller, ManufacturerID + 1);
 
         }
-        regStyle = "error-auth-text-nice";
-        ////DBService.UpdateData();
+        Close();
+        ErrorText = string.Empty;
 
+        toastService.ShowToast<SuccessAdminPanel>(_toastParameters3, new ToastInstanceSettings(5, false));
     }
+    ToastParameters _toastParameters3;
 
     private void ClearFields()
     {

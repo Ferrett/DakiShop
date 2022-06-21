@@ -2,6 +2,7 @@
 @using DakiShop.Logic
 @using DakiShop.Models
 @using DakiShop.Pages
+@using DakiShop.Pages.Toasts
 @inject IJSRuntime JSRuntime
 @inject IToastService toastService
 @inject Blazored.LocalStorage.ILocalStorageService session;
@@ -78,19 +79,23 @@
         {
             <div class="review">
                 <div class="review-h">
-                    <div style="margin-top:5px;">
-                        <span>@DBService.clients.FirstOrDefault(x=>x.ID == item.Client.ID).Login</span>
+                    <div style="width:58%;text-align:start; justify-content:start;">
+                        <div style="margin-top:5px;">
+                            <span>@DBService.clients.FirstOrDefault(x=>x.ID == item.Client.ID).Login</span>
+                        </div>
                     </div>
-                    <div style="margin-bottom:10px;">
-                        <svg fill="orange" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                        <svg fill=@(item.Rating>=2?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                        <svg fill=@(item.Rating>=3?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                        <svg fill=@(item.Rating>=4?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
-                        <svg fill=@(item.Rating==5?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                    <div style="width:80%; display:flex; justify-content:space-between;">
+                        <div style="margin-bottom:10px;">
+                            <svg fill="orange" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                            <svg fill=@(item.Rating>=2?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                            <svg fill=@(item.Rating>=3?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                            <svg fill=@(item.Rating>=4?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                            <svg fill=@(item.Rating==5?"orange":"gray") xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24"><path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z" /></svg>
+                        </div>
 
-                    </div>
-                    <div style="margin-top:5px;">
-                        <span>@(item.ReviewDateTime.Date.ToLocalTime().ToString().Split(' ')[0])</span>
+                        <div style="margin-top:5px;">
+                            <span>@(item.ReviewDateTime.Date.ToLocalTime().ToString().Split(' ')[0])</span>
+                        </div>
                     </div>
                 </div>
                 @if (!string.IsNullOrWhiteSpace(item.Text))
@@ -100,6 +105,15 @@
                         <span style="text-align:center">@item.Text</span>
                     </div>
                 }
+                <div style="justify-content:end; display:flex;">
+                    @if (root)
+                    {
+                        <svg class="rev-del" style="margin-top:10px;" @onclick="()=>DeleteReview(item.ID)" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+
+                    }
+                     <svg class="rev-like" style="margin-top:10px;" @onclick="()=>DeleteReview(item.ID)" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+
+                </div>
             </div>
         }
 
@@ -148,6 +162,8 @@
 
     Dakimakura daki;
     ToastParameters _toastParameters;
+    ToastParameters _toastParameters2;
+    ToastParameters _toastParameters3;
 
     List<string> starStyles = new List<string> { "orange", "gray", "gray", "gray", "gray" };
     List<bool> starLock = new List<bool> { true, false, false, false, false };
@@ -155,11 +171,7 @@
     string ReviewText = string.Empty;
     int ReviewRating = 1;
 
-    protected override void OnParametersSet()
-    {
-        daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
 
-    }
 
     private void Show()
     {
@@ -169,33 +181,46 @@
         }
         else
         {
-            NavManager.NavigateTo("/authentication/",true);
+            NavManager.NavigateTo("/authentication/", true);
         }
     }
 
     private void Submit()
     {
-        DBService.AddReview(daki.ID, ReviewText, ReviewRating,StringCipher.Decrypt(name, "name"));
+        if (name == null)
+            NavManager.NavigateTo("/authentication/", true);
+
+        DBService.AddReview(daki.ID, ReviewText, ReviewRating, StringCipher.Decrypt(name, "name"));
 
         Close();
-        _toastParameters.Add(nameof(MyToastComponent.Title), "Review successfuly sent");
-        toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
+
+        toastService.ShowToast<ReviewSent>(_toastParameters2, new ToastInstanceSettings(5, false));
         DBService.UpdateDakiRating(daki.ID);
         daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
+
     }
 
-    private void AddToCart()
+    private void DeleteReview(int reviewID)
     {
-        if(name != null)
-        {
-            _toastParameters.Add(nameof(MyToastComponent.Title), "Item added to cart");
-            toastService.ShowToast<MyToastComponent>(_toastParameters, new ToastInstanceSettings(5, false));
-        }
-        else
-        {
-            NavManager.NavigateTo("/authentication/",true);
-        }
+        toastService.ShowToast<ReviewDeleted>(_toastParameters3, new ToastInstanceSettings(5, false));
+        DBService.DeleteReview(reviewID);
+        StateHasChanged();
+    }
 
+    private async void AddToCart()
+    {
+        if (name == null)
+            NavManager.NavigateTo("/authentication/", true);
+
+        toastService.ShowToast<AddedToCart>(_toastParameters, new ToastInstanceSettings(5, false));
+
+        string oldItems = null;
+        if (await session.GetItemAsync<string>("cart") != null)
+            oldItems = StringCipher.Decrypt(await session.GetItemAsync<string>("cart"), "cart");
+
+        string updatedItems = oldItems + (oldItems == null ? string.Empty : "l") + daki.ID.ToString();
+
+        await session.SetItemAsync("cart", StringCipher.Encrypt(updatedItems, "cart"));
     }
 
     private void Hover(int id)
@@ -242,10 +267,20 @@
     string name;
     protected override async void OnInitialized()
     {
-        _toastParameters = new ToastParameters();
-         name = await session.GetItemAsync<string>("name");
+        daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
 
-        if (name != null) {
+        _toastParameters = new ToastParameters();
+        _toastParameters2 = new ToastParameters();
+        _toastParameters3 = new ToastParameters();
+
+        _toastParameters.Add(nameof(AddedToCart.Title), "Item added to cart");
+        _toastParameters2.Add(nameof(ReviewSent.Title), "Review successfuly sent");
+        _toastParameters3.Add(nameof(ReviewDeleted.Title), "Review successfuly deleted");
+
+        name = await session.GetItemAsync<string>("name");
+
+        if (name != null)
+        {
             try
             {
                 root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
@@ -253,9 +288,14 @@
             catch (Exception)
             {
                 await session.ClearAsync();
-                NavManager.NavigateTo("/authentication/",true);
+                NavManager.NavigateTo("/authentication/", true);
             }
-           
+
+        }
+        else
+        {
+            await session.ClearAsync();
+            //NavManager.NavigateTo("/authentication/", true);
         }
         StateHasChanged();
 

@@ -1,0 +1,228 @@
+﻿@page "/cart"
+@using DakiShop.Logic
+@using DakiShop.Models
+
+@inject IToastService toastServiceCart
+@inject Blazored.LocalStorage.ILocalStorageService session;
+@inject NavigationManager NavManager
+<PageTitle>Cart</PageTitle>
+
+<div class="stretched">
+    <div class="cart-container">
+        <div class="cart-holder">
+            <div class="cart-left-part">
+                <div class="content-holder">
+                    <div>
+                        <h4 class="cart-title">Cart</h4><hr />
+                    </div>
+                    <div>
+                        @if (dakis.Count == 0)
+                        {
+                            <div class="cart-warn-title">
+                                <div>There's <span style="color: #e4002b">nothing</span> yet. Add your first dish before you can order it!</div>
+                                <div>Also you can acquire a lot of juicy' dakimakuras <a href="https://dakimashop.pp.ua/">here</a> 👈</div>
+                            </div>
+                        }
+                        else
+                        {
+
+                            @foreach (var item in dakis)
+                            {
+                                <div class="cart-item">
+                                    <div style="width: 20%">
+                                        <img class="cart-item-image" src=@item.Key.ImagePath>
+                                    </div>
+                                    <div class="cart-item-additional-info">
+                                        <div>
+                                            <div class="cart-info-part">
+                                                <div style="display: flex;">
+                                                    <span class="cart-item-title">@item.Key.Name </span>
+                                                    <span class="cart-item-title" style="margin: 0 10px; color: #828a9a; font-family: 'Circe-EB'">·</span>
+                                                    <span class="cart-item-title" style="color: #828a9a; font-weight: 100; font-size: 16px; padding-top: 3px; font-family: 'Circe-R'">@item.Key.Category.Name.ToLower()</span>
+                                                </div>
+                                                <div>
+                                                    <span class="cart-item-total-price">$@(item.Key.Price * item.Value)</span>
+
+                                                </div>
+                                            </div>
+                                            <div class="cart-item-price">
+                                                $@item.Key.Price apiece
+                                                <span class="cart-item-price-count-division">x</span>
+                                                <span class="cart-item-price-count">@item.Value</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="cart-info-part">
+                                                <div class="cart-item-description">
+                                                    @item.Key.Name
+                                                </div>
+                                                <div>
+                                                    <button class="cart-remove-button" @onclick="@((args)=>OnRemove(@item.Key))">Remove</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-right-part">
+                <div>
+                    <div class="content-holder">
+                        <div>
+                            <h4 class="delivery-title">Delivery</h4>
+                            <div style="display: flex; justify-content: space-between;">
+                                <div class="switch-field">
+                                    <input type="radio" id="radio-one" name="switch-one" value="Pickup" checked @onclick="@((args)=>PickDelivery("PickUp"))" />
+                                    <label for="radio-one">PickUp</label>
+                                    <input type="radio" id="radio-two" name="switch-one" value="Delivery: $9.99" @onclick="@((args)=>PickDelivery("Delivery"))" />
+                                    <label for="radio-two">Delivery: $9.99</label>
+                                </div>
+                            </div>
+                            @if (dakis.Count > 0)
+                            {
+                                <div style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
+                                    <div>
+                                        @if (IsDeliveryChoosed)
+                                        {
+                                            <span class="delivery-description">We'll deliver it in shortest terms!</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="delivery-description">Take your order at the nearest pickup point!</span>
+                                        }
+                                        <hr class="delivery-division" />
+
+                                        <div class="delivery-additional">
+                                            <div class="dish-cart-preview dish-cart-preview-title">
+                                                <div>Item</div>
+                                                <div>Price</div>
+                                            </div>
+                                            @foreach (var item in dakis)
+                                            {
+                                                <div class="dish-cart-preview">
+                                                    <div>
+                                                        @item.Key.Name
+                                                        @if (@item.Value > 1)
+                                                        {
+                                                            <span style="font-family:'Circe-EB'; margin: 0 4px;">·</span>
+                                                            <span>(</span>
+
+                                                            @item.Value
+
+                                                            <span> copies)</span>
+                                                        }
+                                                    </div>
+                                                    <div class="dish-cart-preview-price">$@(item.Key.Price * item.Value)</div>
+                                                </div>
+                                            }
+
+                                            @if (IsDeliveryChoosed)
+                                            {
+                                                <div class="dish-cart-preview">
+                                                    <div>Delivery</div>
+                                                    <div class="dish-cart-preview-price">$9.99</div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <hr class="delivery-division" />
+                                        <div class="dish-cart-preview dish-cart-preview-title">
+                                            <div>Total</div>
+                                            <div class="dish-cart-preview-price dish-cart-preview-price-total">@dakis.Keys.Sum(x=>x.Price * dakis[x])$</div>
+                                        </div>
+                                    </div>
+                                    <div style="justify-content:space-between; display: flex; flex-direction: column; column-gap: 10px">
+                                        <div style="margin-bottom: 12px;">
+                                            <NavLink href="/">
+                                                <button class="proceed-button">Proceed to checkout</button>
+                                            </NavLink>
+                                        </div>
+
+                                        <div>
+                                            <NavLink href="/">
+                                                <button class="proceed-button proceed-button-to-index">Continue shopping</button>
+                                            </NavLink>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="delivery-description">Add your dishes to buy firstly.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    private bool IsDeliveryChoosed { get; set; } = false;
+
+    private ToastParameters _toastParameters;
+    Dictionary<Dakimakura, int> dakis = new Dictionary<Dakimakura, int>();
+    List<string> dakiKeyVal;
+    Dictionary<int, int> dakiIDS = new Dictionary<int, int>();
+
+    int Id = 0;
+
+    private void OnRemove(Dakimakura d)
+    {
+        // Cart.RemoveItem(dish);
+    }
+
+    private void PickDelivery(string Way)
+    {
+        IsDeliveryChoosed = Way == "Delivery";
+    }
+
+    string cartCrypted;
+    string cartDecrypted;
+
+    protected override async void OnInitialized()
+    {
+        string a = await session.GetItemAsync<string>("cart");
+
+        if (a != null)
+        {
+            try
+            {
+                cartDecrypted = StringCipher.Decrypt(a, "cart");
+                dakiKeyVal = cartDecrypted.Split('l').ToList();
+
+
+                foreach (var item in dakiKeyVal)
+                {
+                    if (dakis.ContainsKey(DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(item))))
+                    {
+                        dakis[DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(item))] = dakis[DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(item))] + 1;
+                    }
+                    else
+                    {
+                        dakis.Add(DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(item)), 1);
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+                await session.ClearAsync();
+                NavManager.NavigateTo("/authentication/", true);
+            }
+        }
+        else
+        {
+            await session.ClearAsync();
+           NavManager.NavigateTo("/authentication/", true);
+        }
+
+        StateHasChanged();
+    }
+}
