@@ -111,16 +111,19 @@
                         <svg class="rev-del" style="margin-top:10px;" @onclick="()=>DeleteReview(item.ID)" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
 
                     }
-                     <svg class="rev-like" style="margin-top:10px;" @onclick="()=>DeleteReview(item.ID)" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+                    <div class=@(likedIDS.Contains(item.ID.ToString())?"rev-like2":"rev-like") @onclick="()=>LikeRev(item.ID)" style="justify-content:end; display:flex; margin-top:10px;">
+
+
+                        <svg style="fill:white;" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
+
+                        <span style="font-family:'Circe-B';font-size:30px;margin-left:@(likedIDS.Contains(item.ID.ToString())?"20px":"0px");line-height: 31px">@(item.Likes==0? string.Empty:item.Likes.ToString())</span>
+                    </div>
 
                 </div>
             </div>
         }
 
     </div>
-
-
-
 </div>
 
 <RewiewForm @ref="popupWindow" OnPurchase="Submit">
@@ -167,7 +170,7 @@
 
     List<string> starStyles = new List<string> { "orange", "gray", "gray", "gray", "gray" };
     List<bool> starLock = new List<bool> { true, false, false, false, false };
-
+    List<string> likedIDS = new List<string>();
     string ReviewText = string.Empty;
     int ReviewRating = 1;
 
@@ -198,6 +201,62 @@
         DBService.UpdateDakiRating(daki.ID);
         daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
 
+    }
+
+    private async void LikeRev(int reviewID)
+    {
+        if (name == null)
+            NavManager.NavigateTo("/authentication/", true);
+
+        string oldLikes = null;
+        List<string> oldLikesS = new List<string>();
+
+        try
+        {
+            oldLikes = StringCipher.Decrypt(await session.GetItemAsync<string>("like"), "like");
+            oldLikesS = oldLikes.Split('l').ToList();
+        }
+        catch (Exception) {  }
+
+
+        if (oldLikesS.Contains(reviewID.ToString()))
+        {
+            DBService.RemoveLike(reviewID);
+            oldLikesS.Remove(reviewID.ToString());
+        }
+        else
+        {
+            oldLikesS.Add(reviewID.ToString());
+            DBService.AddLike(reviewID);
+        }
+
+        likedIDS = oldLikesS;
+
+        string updatedItems = null;
+        foreach (var item in oldLikesS)
+        {
+            updatedItems += item;
+            updatedItems += "l";
+        }
+        updatedItems = updatedItems.Remove(updatedItems.Length-1);
+
+        await session.SetItemAsync("like", StringCipher.Encrypt(updatedItems, "like"));
+
+        //UpdLikedStyles();
+        StateHasChanged();
+    }
+
+    private async void UpdLikedStyles()
+    {
+        string oldLikes = null;
+        List<string> oldLikesS = new List<string>();
+        try
+        {
+            oldLikes = StringCipher.Decrypt(await session.GetItemAsync<string>("like"), "like");
+            oldLikesS = oldLikes.Split('l').ToList();
+        }
+        catch (Exception) {  }
+        likedIDS = oldLikesS;
     }
 
     private void DeleteReview(int reviewID)
@@ -263,6 +322,8 @@
         popupWindow.Hide();
     }
 
+
+
     bool root = false;
     string name;
     protected override async void OnInitialized()
@@ -276,6 +337,8 @@
         _toastParameters.Add(nameof(AddedToCart.Title), "Item added to cart");
         _toastParameters2.Add(nameof(ReviewSent.Title), "Review successfuly sent");
         _toastParameters3.Add(nameof(ReviewDeleted.Title), "Review successfuly deleted");
+
+        UpdLikedStyles();
 
         name = await session.GetItemAsync<string>("name");
 

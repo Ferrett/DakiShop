@@ -343,5 +343,29 @@ namespace DakiShop.Logic
             }
             UpdateData();
         }
+
+        public static void AddLike(int reviewID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Review.Where(x => x.ID == reviewID).First();
+
+                d.Likes++;
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
+
+        public static void RemoveLike(int reviewID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Review.Where(x => x.ID == reviewID).First();
+
+                d.Likes--;
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
     }
 }
