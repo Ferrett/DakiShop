@@ -10,6 +10,8 @@ namespace DakiShop.Logic
         public DbSet<Client> Client { get; set; } = null!;
         public DbSet<Dakimakura> Dakimakura { get; set; } = null!;
         public DbSet<Review> Review { get; set; } = null!;
+        public DbSet<ItemInCart> ItemInCart{ get; set; } = null!;
+        public DbSet<ReviewLike> ReviewLike { get; set; } = null!;
 
         public DBContext()
         {

@@ -10,6 +10,8 @@ namespace DakiShop.Logic
         public static List<Manufacturer> manufacturers { get; set; } = new List<Manufacturer>();
         public static List<Review> reviews { get; set; } = new List<Review>();
         public static List<Client> clients { get; set; } = new List<Client>();
+        public static List<ItemInCart> itemsInCart { get; set; } = new List<ItemInCart>();
+        public static List<ReviewLike> reviewLike { get; set; } = new List<ReviewLike>();
 
         public static void InitDB()
         {
@@ -71,7 +73,6 @@ namespace DakiShop.Logic
                     Text = text,
                     Rating = rating,
                     ReviewDateTime = DateTime.Now,
-                    Likes = 0,
                     Client = db.Client.FirstOrDefault(x => x.Login.ToLower().Equals(userName.ToLower()))!
                 });
                 db.SaveChanges();
@@ -128,14 +129,16 @@ namespace DakiShop.Logic
                 manufacturers = db.Manufacturer.ToList();
                 reviews = db.Review.ToList();
                 clients = db.Client.ToList();
+                itemsInCart = db.ItemInCart.ToList();
+                reviewLike = db.ReviewLike.ToList();
             }
         }
-
+        
         public static void AddNewUser(string login, string email, string password)
         {
             using (DBContext db = new DBContext())
             {
-                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvaPath= "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
+                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvaPath = "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
                 db.SaveChanges();
             }
             UpdateData();
@@ -288,7 +291,7 @@ namespace DakiShop.Logic
 
                 return false;
             }
-            
+
         }
 
         public static void DeleteCategory(int id)
@@ -344,30 +347,6 @@ namespace DakiShop.Logic
             UpdateData();
         }
 
-        public static void AddLike(int reviewID)
-        {
-            using (DBContext db = new DBContext())
-            {
-                var d = db.Review.Where(x => x.ID == reviewID).First();
-
-                d.Likes++;
-                db.SaveChanges();
-            }
-            UpdateData();
-        }
-
-        public static void RemoveLike(int reviewID)
-        {
-            using (DBContext db = new DBContext())
-            {
-                var d = db.Review.Where(x => x.ID == reviewID).First();
-
-                d.Likes--;
-                db.SaveChanges();
-            }
-            UpdateData();
-        }
-
         public static void EditManufacturer(int manufactuerID, string newName)
         {
             using (DBContext db = new DBContext())
@@ -389,6 +368,67 @@ namespace DakiShop.Logic
                 db.SaveChanges();
             }
             UpdateData();
+        }
+
+        public static async void AddItemToCart(int userID, int itemID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    db.ItemInCart.Add(new ItemInCart
+                    {
+                        ClientID = userID,
+                        ItemID = itemID
+                    });
+                    db.SaveChanges();
+                }
+            });
+        }
+
+        public static async void DeleteItemFromCart(int userID, int itemID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    db.ItemInCart.Remove(db.ItemInCart.Where(x => x.ClientID == userID && x.ItemID == itemID).First());
+
+                    db.SaveChanges();
+                } 
+            });
+        }
+
+        public static async void AddLike(int userID, int reviewID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    db.ReviewLike.Add(new ReviewLike
+                    {
+                        ClientID = userID,
+                        ReviewID = reviewID
+                    });
+
+
+                    db.SaveChanges();
+                }
+                //UpdateData();
+            });
+        }
+
+        public static async void DeleteLike(int userID, int reviewID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    db.ReviewLike.Remove(db.ReviewLike.Where(x => x.ClientID == userID && x.ReviewID == reviewID).First());
+
+                    db.SaveChanges();
+                }
+            });
         }
     }
 }

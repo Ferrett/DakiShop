@@ -89,7 +89,7 @@
     }
 
 .rev-like2 {
-    background-color: #6ddd5b;
+    background-color: #8DFF8A;
     color: white;
     border-radius: 10px;
     letter-spacing: 1px;
@@ -98,10 +98,7 @@
     margin: 10px 10px 10px 10px;
     /* transition: 0.3s ease;*/
 }
-.rev-like2:hover {
-    background-color: #68c15a;
-    cursor: pointer;
-}
+
 
 
     .rev-del {

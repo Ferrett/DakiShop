@@ -44,7 +44,7 @@
                 </NavLink>
 
                 <NavLink href="/authentication">
-                    <button class="registration-button">@(cocks==null?"Log In":cocks)</button>
+                    <button class="registration-button">@(userName==null?"Log In":userName)</button>
                 </NavLink>
             </div>
 
@@ -55,6 +55,10 @@
             @Body
 
         </CascadingValue>
+
+         <div>
+            <Footer />
+        </div>
     </main>
 </div>
 
@@ -80,7 +84,7 @@
 
 
     EventCallback btn_clicked => EventCallback.Factory.Create(this, Test);
-    string cocks;
+    string userName;
     public async void Test(object a)
     { 
         name = await session.GetItemAsync<string>("name");
@@ -89,13 +93,13 @@
             try
             {
                 root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-                cocks = StringCipher.Decrypt(name, "name");
+                userName = StringCipher.Decrypt(name, "name");
             }
             catch (Exception)
             {
                 await session.ClearAsync();
                 root = false;
-                cocks = null;
+                userName = null;
             }
 
         }
