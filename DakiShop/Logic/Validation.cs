@@ -135,9 +135,31 @@ namespace RaportBlazorServer.Logic
 		public static Tuple<bool, string> ValidateDeleteDakimakura(int id)
 		{
 			if (!DBService.IsDakimakuraExists(id))
-				return Tuple.Create(false, "Удаление невозможно. Категория используется");
+				return Tuple.Create(false, "Удаление невозможно. Такой дакимакуры не существует");
 
 			return Tuple.Create(true, "Дакимакура успешно удалена");
+		}
+
+		public static Tuple<bool, string> ValidateEditManufacturer(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return Tuple.Create(false, "Некорректное название");
+
+			if (DBService.IsManufacturerExists(name))
+				return Tuple.Create(false, "Производитель с таким именем уже есть");
+
+			return Tuple.Create(true, "Производитель успешно переименован");
+		}
+
+		public static Tuple<bool, string> ValidateEditCategory(string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return Tuple.Create(false, "Некорректное название");
+
+			if (DBService.IsCategoryExists(name))
+				return Tuple.Create(false, "Категория с таким именем уже есть");
+
+			return Tuple.Create(true, "Категория успешно переименована");
 		}
 	}
 }

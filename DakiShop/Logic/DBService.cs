@@ -367,5 +367,28 @@ namespace DakiShop.Logic
             }
             UpdateData();
         }
+
+        public static void EditManufacturer(int manufactuerID, string newName)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Manufacturer.Where(x => x.ID == manufactuerID).First();
+
+                d.Name = newName;
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
+        public static void EditCategory(int categoryID, string newName)
+        {
+            using (DBContext db = new DBContext())
+            {
+                var d = db.Category.Where(x => x.ID == categoryID).First();
+
+                d.Name = newName;
+                db.SaveChanges();
+            }
+            UpdateData();
+        }
     }
 }
