@@ -133,7 +133,7 @@ namespace DakiShop.Logic
                 reviewLike = db.ReviewLike.ToList();
             }
         }
-        
+
         public static void AddNewUser(string login, string email, string password)
         {
             using (DBContext db = new DBContext())
@@ -395,8 +395,42 @@ namespace DakiShop.Logic
                     db.ItemInCart.Remove(db.ItemInCart.Where(x => x.ClientID == userID && x.ItemID == itemID).First());
 
                     db.SaveChanges();
-                } 
+                }
             });
+        }
+
+        public static async void DeleteAllCart(int userID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    db.ItemInCart.RemoveRange(db.ItemInCart.Where(x => x.ClientID == userID));
+
+                    db.SaveChanges();
+                }
+            });
+        }
+
+        public static async void AddBuys(int userID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    List<ItemInCart> items = db.ItemInCart.Where(x => x.ClientID == userID).ToList();
+
+                    List<Dakimakura> daki = new List<Dakimakura>();
+                    foreach (var item in items)
+                    {
+                        daki.Add(db.Dakimakura.Where(x => x.ID == item.ItemID).First());
+                    }
+
+                    daki.ForEach(x => x.PurchasedNumber++);
+                    db.SaveChanges();
+                }
+            });
+            UpdateData();
         }
 
         public static async void AddLike(int userID, int reviewID)

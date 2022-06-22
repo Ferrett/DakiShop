@@ -48,7 +48,7 @@
         || (!DBService.dakimakuras.Any(x => x.Category.ID == CategoryID) && CategoryID != 0)
         || (!DBService.dakimakuras.Any(x => x.Price <= CurrentPrice) && CategoryID == 0))
         {
-            <div class="assortment-container-stretched">Sorry! Nothing has been found by your request!</div>
+            <div class="assortment-container-stretched" style="font-family:'Circe-B';font-size:40px;">Sorry! Nothing has been found by your request!</div>
         }
         else
         {
@@ -170,8 +170,10 @@
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
 
+
+            await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
+            await JSRuntime.InvokeVoidAsync("updScroll");
             StateHasChanged();
         }
     }

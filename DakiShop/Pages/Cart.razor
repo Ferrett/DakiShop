@@ -7,9 +7,6 @@
 @inject NavigationManager NavManager
 <PageTitle>Cart</PageTitle>
 
-@try
-{
-
 
 <div class="stretched">
     <div class="cart-container">
@@ -45,21 +42,13 @@
                                                     <span class="cart-item-title" style="color: #828a9a; font-weight: 100; font-size: 16px; padding-top: 3px; font-family: 'Circe-R'">@item.Key.Category.Name.ToLower()</span>
                                                 </div>
                                                 <div>
-                                                    <span class="cart-item-total-price">$@(item.Key.Price * item.Value)</span>
+                                                    <span class="cart-item-total-price">$@($"{item.Key.Price} x {item.Value}")</span>
 
                                                 </div>
-                                            </div>
-                                            <div class="cart-item-price">
-                                                $@item.Key.Price apiece
-                                                <span class="cart-item-price-count-division">x</span>
-                                                <span class="cart-item-price-count">@item.Value</span>
                                             </div>
                                         </div>
                                         <div>
                                             <div class="cart-info-part">
-                                                <div class="cart-item-description">
-                                                    @item.Key.Name
-                                                </div>
                                                 <div>
                                                     <button class="cart-remove-button" @onclick="@((args)=>OnRemove(@item.Key))">Remove</button>
                                                 </div>
@@ -105,14 +94,6 @@
                                                     <div class="dish-cart-preview-price">$@(item.Key.Price * item.Value)</div>
                                                 </div>
                                             }
-
-                                            @if (IsDeliveryChoosed)
-                                            {
-                                                <div class="dish-cart-preview">
-                                                    <div>Delivery</div>
-                                                    <div class="dish-cart-preview-price">$9.99</div>
-                                                </div>
-                                            }
                                         </div>
                                         <hr class="delivery-division" />
                                         <div class="dish-cart-preview dish-cart-preview-title">
@@ -122,9 +103,9 @@
                                     </div>
                                     <div style="justify-content:space-between; display: flex; flex-direction: column; column-gap: 10px">
                                         <div style="margin-bottom: 12px;">
-                                            <NavLink href="/">
-                                                <button class="proceed-button">Proceed to checkout</button>
-                                            </NavLink>
+                                            
+                                                <button @onclick="ClearAll" class="proceed-button">Proceed to checkout</button>
+
                                         </div>
 
                                         <div>
@@ -146,16 +127,9 @@
         </div>
     </div>
 </div>
-}
-catch (Exception)
-{
-    
-    
-}
+
 @code
 {
-    private bool IsDeliveryChoosed { get; set; } = false;
-
     private ToastParameters _toastParameters;
     Dictionary<Dakimakura, int> dakisInCart = new Dictionary<Dakimakura, int>();
 
@@ -173,19 +147,25 @@ catch (Exception)
                 dakisInCart.Add(DBService.dakimakuras.Where(x=>x.ID == item.ItemID).First(), 1);
             }
         }
+         StateHasChanged();
+    }
+
+    private void ClearAll()
+    {
+        dakisInCart.Clear();
+        //Upd();
+        StateHasChanged();
+        DBService.AddBuys(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID);
+        DBService.DeleteAllCart(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID);
+       
     }
     private void OnRemove(Dakimakura d)
     {
         DBService.itemsInCart.Remove(DBService.itemsInCart.Where(x => x.ClientID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.ItemID == d.ID).FirstOrDefault());
 
         Upd();
-        StateHasChanged();
+       
         DBService.DeleteItemFromCart(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID, d.ID);
-    }
-
-    private void PickDelivery(string Way)
-    {
-        IsDeliveryChoosed = Way == "Delivery";
     }
 
     string cartCrypted;
@@ -207,7 +187,7 @@ catch (Exception)
                 await session.ClearAsync();
                 NavManager.NavigateTo("/authentication/", true);
             }
-
+            Upd();
         }
         else
         {
@@ -215,7 +195,7 @@ catch (Exception)
             //NavManager.NavigateTo("/authentication/", true);
         }
 
-        Upd();
+        
 
         
         StateHasChanged();

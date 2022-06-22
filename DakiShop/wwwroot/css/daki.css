@@ -98,7 +98,9 @@
     margin: 10px 10px 10px 10px;
     /* transition: 0.3s ease;*/
 }
-
+.rev-like2:hover {
+    cursor: pointer;
+}
 
 
     .rev-del {
@@ -113,10 +115,10 @@
     fill: white;
 }
 
-    .rev-del:hover {
-        padding: 11px;
-        background-color: #FB0000;
-        transition: 0.3s ease;
-        transform: scale(0.96);
-        cursor: pointer;
-    }
+        .rev-del:hover {
+            padding: 11px;
+            background-color: #8DFF8A;
+            transition: 0.3s ease;
+            transform: scale(0.96);
+            cursor: pointer;
+        }
