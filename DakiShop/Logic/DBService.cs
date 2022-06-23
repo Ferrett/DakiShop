@@ -463,6 +463,15 @@ namespace DakiShop.Logic
                     db.SaveChanges();
                 }
             });
+
+            using (var context = new DBContext())
+            {
+                //var query = from st in context.Manufacturer
+                //            where st.StudentName == "Bill"
+                //            select st;
+
+                //var student = query.FirstOrDefault<Student>();
+            }
         }
     }
 }

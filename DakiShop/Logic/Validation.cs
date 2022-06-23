@@ -36,7 +36,7 @@ namespace RaportBlazorServer.Logic
 				return Tuple.Create(false, "Пароли не совпадают");
 
 			if (Regex.IsMatch(login, @"\p{IsCyrillic}"))
-				return Tuple.Create(false, "Какая кириллица, долбаёб");
+				return Tuple.Create(false, "Используйте только латинские символы");
 
 
 			return Tuple.Create(true, "Регистрация прошла успешно");

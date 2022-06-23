@@ -161,9 +161,11 @@
             //NavManager.NavigateTo("/authentication/", true);
         }
 
-
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
+
+        await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
+        await JSRuntime.InvokeVoidAsync("updScroll");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -172,8 +174,8 @@
         {
 
 
-            await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
-            await JSRuntime.InvokeVoidAsync("updScroll");
+            //await JSRuntime.InvokeVoidAsync("setPriceScroll", max_price);
+            //await JSRuntime.InvokeVoidAsync("updScroll");
             StateHasChanged();
         }
     }
