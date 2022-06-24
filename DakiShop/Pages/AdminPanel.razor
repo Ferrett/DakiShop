@@ -34,7 +34,7 @@
 
                 <div style="display:flex;justify-content:space-between;">
                     <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                    <input @bind-value="DakiImagePath" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiImageURL" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:center;">
@@ -42,9 +42,9 @@
                     {
                         <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
                     }
-                    else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                    else if (!string.IsNullOrWhiteSpace(DakiImageURL))
                     {
-                        <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                        <img class="card-img" src=@DakiImageURL style="max-height: 150px; width:auto; margin-bottom:20px;">
                     }
                 </div>
 
@@ -85,12 +85,17 @@
 
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
                     <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                    <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <input @bind-value="DakiDescription" type="text" class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
 
                 <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                    <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                    <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    <label class="confirmation-text" style="margin-top:10px;">Height</label>
+                    <input @bind-value="DakiHeight" type="text" class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                </div> 
+                
+                <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                    <label class="confirmation-text" style="margin-top:10px;">Width</label>
+                    <input @bind-value="DakiWidth" type="text" class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                 </div>
             </div>
         }
@@ -129,7 +134,7 @@
 
                     <div style="display:flex;justify-content:space-between;">
                         <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                        <input @bind-value="DakiImagePath" readonly type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiImageURL" readonly type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
 
                     <div style="display:flex; justify-content:center;">
@@ -137,9 +142,9 @@
                         {
                             <img class="card-img" readonly src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
                         }
-                        else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                        else if (!string.IsNullOrWhiteSpace(DakiImageURL))
                         {
-                            <img class="card-img" readonly src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                            <img class="card-img" readonly src=@DakiImageURL style="max-height: 150px; width:auto; margin-bottom:20px;">
                         }
                     </div>
 
@@ -180,12 +185,17 @@
 
                     <div style="display:flex; justify-content:space-between; margin-top:15px;">
                         <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                        <input @bind-value="DakiFiller" type="text" readonly class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiDescription" type="text" readonly class="form-control" id="first-name" placeholder="Holofiber" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
 
                     <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                        <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                        <input @bind-value="DakiSize" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <label class="confirmation-text" style="margin-top:10px;">Height</label>
+                        <input @bind-value="DakiHeight" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Width</label>
+                        <input @bind-value="DakiWidth" type="text" readonly class="form-control" id="first-name" placeholder="150x90" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
                 }
 
@@ -239,7 +249,7 @@
                 {
                     <div style="display:flex;justify-content:space-between;">
                         <label class="confirmation-text" style="width:30%; margin-top:8px;">Image Path</label>
-                        <input @bind-value="DakiImagePath" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiImageURL" @bind-value:event="oninput" type="text" class="form-control" id="first-name" placeholder="Enter Image Path" style=" width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
 
                     <div style="display:flex; justify-content:center;">
@@ -247,9 +257,9 @@
                         {
                             <img class="card-img" src=@("https://tmpdaki.s3.eu-west-2.amazonaws.com/" + AwsFileGuid) style="max-height: 150px;width:auto; margin-bottom:20px;">
                         }
-                        else if (!string.IsNullOrWhiteSpace(DakiImagePath))
+                        else if (!string.IsNullOrWhiteSpace(DakiImageURL))
                         {
-                            <img class="card-img" src=@DakiImagePath style="max-height: 150px; width:auto; margin-bottom:20px;">
+                            <img class="card-img" src=@DakiImageURL style="max-height: 150px; width:auto; margin-bottom:20px;">
                         }
                     </div>
 
@@ -290,12 +300,17 @@
 
                     <div style="display:flex; justify-content:space-between; margin-top:15px;">
                         <label class="confirmation-text" style="margin-top:10px;">Filler</label>
-                        <input @bind-value="DakiFiller" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <input @bind-value="DakiDescription" type="text" class="form-control" id="first-name" placeholder="Holofiber" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
 
                     <div style="display:flex; justify-content:space-between; margin-top:15px;">
-                        <label class="confirmation-text" style="margin-top:10px;">Size</label>
-                        <input @bind-value="DakiSize" type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                        <label class="confirmation-text" style="margin-top:10px;">Height</label>
+                        <input @bind-value="DakiHeight" type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
+                    </div> 
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:15px;">
+                        <label class="confirmation-text" style="margin-top:10px;">Width</label>
+                        <input @bind-value="DakiWidth" type="text" class="form-control" id="first-name" placeholder="150x90" style="width:80%; margin-bottom:20px; font-size:20px;font-family:'Circe-R';">
                     </div>
                 }
             </div>
@@ -363,7 +378,7 @@
 @code {
 
     string _dakiNameImagePath = string.Empty;
-    private string DakiImagePath
+    private string DakiImageURL
     {
         get
         {
@@ -391,8 +406,9 @@
     bool FileUploadedToBucket = false;
     string DakiName = string.Empty;
     string DakiPrice = string.Empty;
-    string DakiFiller = string.Empty;
-    string DakiSize = string.Empty;
+    string DakiDescription = string.Empty;
+    string DakiHeight = string.Empty;
+    string DakiWidth = string.Empty;
     string CategotyName = string.Empty;
     string ManufacturerName = string.Empty;
     string AwsFileGuid = string.Empty;
@@ -447,16 +463,6 @@
         StateHasChanged();
     }
 
-    //private void Check()
-    //{
-        //if (File.Exists(DakiImagePath))
-        //{
-        //    AwsFileGuid = Guid.NewGuid().ToString();
-        //    AWSManager.UploadFile(File.Open(DakiImagePath, FileMode.Open), "tmpdaki", AwsFileGuid, Amazon.RegionEndpoint.EUWest2);
-        //    FileUploadedToBucket = true;
-        //}
-    //}
-
     private void CheckDakiID()
     {
         if (string.IsNullOrWhiteSpace(DakiID) || !int.TryParse(DakiID, out int i) || !DBService.dakimakuras.Any(x => x.ID == int.Parse(DakiID)))
@@ -473,11 +479,12 @@
 
         DakiName = Daki.Name;
         DakiPrice = Daki.Price.ToString();
-        DakiFiller = Daki.Filler;
-        DakiSize = Daki.Size;
+        DakiDescription = Daki.Description;
+        DakiHeight = Daki.Height.ToString();
+        DakiWidth = Daki.Width.ToString();
         CategoryID = Daki.Category.ID - 1;
         ManufacturerID = Daki.Manufacturer.ID - 1;
-        DakiImagePath = Daki.ImagePath;
+        DakiImageURL = Daki.ImageURL;
     }
 
     private void Submit()
@@ -486,11 +493,11 @@
 
         if (ID == 1)
         {
-            var responce = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller, true);
+            var responce = Validation.ValidateNewDakimakura(DakiImageURL, DakiName, DakiPrice, DakiHeight,DakiWidth, DakiDescription, true);
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
-            DBService.AddDakimakura(CategoryID + 3, DakiImagePath, DakiName, int.Parse(DakiPrice), DakiSize, DakiFiller, ManufacturerID + 1);
+            DBService.AddDakimakura(CategoryID + 3, DakiImageURL, DakiName, int.Parse(DakiPrice), int.Parse(DakiHeight),int.Parse(DakiWidth), DakiDescription, ManufacturerID + 1);
         }
         else if (ID == 2)
         {
@@ -538,11 +545,11 @@
             ErrorText = responce.Item2;
             if (!responce.Item1) return;
 
-            var responce2 = Validation.ValidateNewDakimakura(DakiImagePath, DakiName, DakiPrice, DakiSize, DakiFiller, false);
+            var responce2 = Validation.ValidateNewDakimakura(DakiImageURL, DakiName, DakiPrice, DakiHeight,DakiWidth, DakiDescription, false);
             ErrorText = responce2.Item2;
 
             if (!responce2.Item1) return;
-            DBService.EditDakimakura(int.Parse(DakiID), CategoryID + 3, DakiImagePath, DakiName, int.Parse(DakiPrice), DakiSize, DakiFiller, ManufacturerID + 1);
+            DBService.EditDakimakura(int.Parse(DakiID), CategoryID + 3, DakiImageURL, DakiName, int.Parse(DakiPrice), int.Parse(DakiHeight),int.Parse(DakiWidth), DakiDescription, ManufacturerID + 1);
 
         }
         else if (ID == 8)
@@ -572,15 +579,17 @@
     {
         DakiName = string.Empty;
         DakiPrice = string.Empty;
-        DakiFiller = string.Empty;
-        DakiSize = string.Empty;
+        DakiDescription = string.Empty;
+        DakiHeight = string.Empty;
+        DakiWidth = string.Empty;
         ManufacturerName = string.Empty;
         CategotyName = string.Empty;
         CategoryID = 0;
         ManufacturerID = 0;
-        //DakiID = string.Empty;
-        DakiImagePath = string.Empty;
+        DakiImageURL = string.Empty;
         ErrorText = string.Empty;
+
+        //DakiID = string.Empty;
     }
 
     private void Show(int id)

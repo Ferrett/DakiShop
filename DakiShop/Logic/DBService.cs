@@ -22,18 +22,19 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void AddDakimakura(int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
+        public static void AddDakimakura(int categoryID, string imageURL, string name, int price, int heigth, int width, string description, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
                 db.Dakimakura.Add(new Dakimakura
                 {
                     Category = db.Category.FirstOrDefault(x => x.ID == categoryID)!,
-                    ImagePath = imagePath,
+                    ImageURL = imageURL,
                     Name = name,
                     Price = price,
-                    Size = size,
-                    Filler = filler,
+                    Height = heigth,
+                    Width = width,
+                    Description = description,
                     Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == manufacturerID)!,
                     PurchasedNumber = 0,
                     Rating = 0
@@ -43,17 +44,18 @@ namespace DakiShop.Logic
             UpdateData();
         }
 
-        public static void EditDakimakura(int dakiID, int categoryID, string imagePath, string name, int price, string size, string filler, int manufacturerID)
+        public static void EditDakimakura(int dakiID, int categoryID, string imageURL, string name, int price, int heigth, int width, string description, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {
                 var d = db.Dakimakura.Where(x => x.ID == dakiID).First();
                 d.Category = db.Category.FirstOrDefault(x => x.ID == categoryID)!;
-                d.ImagePath = imagePath;
+                d.ImageURL = imageURL;
                 d.Name = name;
                 d.Price = price;
-                d.Size = size;
-                d.Filler = filler;
+                d.Height = heigth;
+                d.Width = width;
+                d.Description = description;
                 d.Manufacturer = db.Manufacturer.FirstOrDefault(x => x.ID == manufacturerID)!;
 
 
@@ -72,7 +74,7 @@ namespace DakiShop.Logic
                     Dakimakura = db.Dakimakura.Where(x => x.ID == dakiID).First(),
                     Text = text,
                     Rating = rating,
-                    ReviewDateTime = DateTime.Now,
+                    PublishTime = DateTime.Now,
                     Client = db.Client.FirstOrDefault(x => x.Login.ToLower().Equals(userName.ToLower()))!
                 });
                 db.SaveChanges();
@@ -80,7 +82,7 @@ namespace DakiShop.Logic
 
             UpdateData();
         }
-        public static void AddRootUser(string login, string email, string password, string avaPath)
+        public static void AddRootUser(string login, string email, string password, string avatarURL)
         {
             using (DBContext db = new DBContext())
             {
@@ -90,7 +92,7 @@ namespace DakiShop.Logic
                     Email = email.ToLower(),
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()),
                     IsAdmin = true,
-                    AvaPath = avaPath
+                    AvatarURL = avatarURL
                 });
                 db.SaveChanges();
             }
@@ -138,7 +140,7 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvaPath = "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
+                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvatarURL= "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
                 db.SaveChanges();
             }
             UpdateData();
@@ -327,9 +329,9 @@ namespace DakiShop.Logic
                 var d = db.Dakimakura.Where(x => x.ID == dakiID).First();
 
 
-                decimal a = db.Review.Where(x => x.Dakimakura.ID == dakiID).Sum(x => x.Rating);
-                decimal b = db.Review.Where(x => x.Dakimakura.ID == dakiID).Count();
-                decimal c = a / b;
+                double a = db.Review.Where(x => x.Dakimakura.ID == dakiID).Sum(x => x.Rating);
+                double b = db.Review.Where(x => x.Dakimakura.ID == dakiID).Count();
+                double c = a / b;
                 d.Rating = c;
                 db.SaveChanges();
             }
@@ -370,7 +372,7 @@ namespace DakiShop.Logic
             UpdateData();
         }
 
-        public static async void AddItemToCart(int userID, int itemID)
+        public static async void AddItemToCart(Guid userID, int itemID)
         {
             await Task.Run(() =>
             {
@@ -378,52 +380,52 @@ namespace DakiShop.Logic
                 {
                     db.ItemInCart.Add(new ItemInCart
                     {
-                        ClientID = userID,
-                        ItemID = itemID
-                    });
+                        Client = db.Client.First(x => x.ID == userID),
+                        Dakimakura = db.Dakimakura.First(x => x.ID == itemID),
+                    }) ;
                     db.SaveChanges();
                 }
             });
         }
 
-        public static async void DeleteItemFromCart(int userID, int itemID)
+        public static async void DeleteItemFromCart(Guid userID, int itemID)
         {
             await Task.Run(() =>
             {
                 using (DBContext db = new DBContext())
                 {
-                    db.ItemInCart.Remove(db.ItemInCart.Where(x => x.ClientID == userID && x.ItemID == itemID).First());
-
-                    db.SaveChanges();
-                }
-            });
-        }
-
-        public static async void DeleteAllCart(int userID)
-        {
-            await Task.Run(() =>
-            {
-                using (DBContext db = new DBContext())
-                {
-                    db.ItemInCart.RemoveRange(db.ItemInCart.Where(x => x.ClientID == userID));
+                    db.ItemInCart.Remove(db.ItemInCart.Where(x => x.Client == db.Client.First(x => x.ID == userID) && x.Dakimakura == db.Dakimakura.First(x => x.ID == itemID)).First());
 
                     db.SaveChanges();
                 }
             });
         }
 
-        public static async void AddBuys(int userID)
+        public static async void DeleteAllCart(Guid userID)
         {
             await Task.Run(() =>
             {
                 using (DBContext db = new DBContext())
                 {
-                    List<ItemInCart> items = db.ItemInCart.Where(x => x.ClientID == userID).ToList();
+                    db.ItemInCart.RemoveRange(db.ItemInCart.Where(x => x.Client == db.Client.First(x => x.ID == userID)));
+
+                    db.SaveChanges();
+                }
+            });
+        }
+
+        public static async void AddBuys(Guid userID)
+        {
+            await Task.Run(() =>
+            {
+                using (DBContext db = new DBContext())
+                {
+                    List<ItemInCart> items = db.ItemInCart.Where(x => x.Client == db.Client.Where(x => x.ID == userID)).ToList();
 
                     List<Dakimakura> daki = new List<Dakimakura>();
                     foreach (var item in items)
                     {
-                        daki.Add(db.Dakimakura.Where(x => x.ID == item.ItemID).First());
+                        daki.Add(db.Dakimakura.Where(x => x.ID == item.Dakimakura.ID).First());
                     }
 
                     daki.ForEach(x => x.PurchasedNumber++);
@@ -433,7 +435,7 @@ namespace DakiShop.Logic
             UpdateData();
         }
 
-        public static async void AddLike(int userID, int reviewID)
+        public static async void AddLike(Guid userID, int reviewID)
         {
             await Task.Run(() =>
             {
@@ -441,8 +443,8 @@ namespace DakiShop.Logic
                 {
                     db.ReviewLike.Add(new ReviewLike
                     {
-                        ClientID = userID,
-                        ReviewID = reviewID
+                        Client = db.Client.First(x=>x.ID ==  userID),
+                        Review = db.Review.First(x => x.ID == reviewID),
                     });
 
 
@@ -452,13 +454,13 @@ namespace DakiShop.Logic
             });
         }
 
-        public static async void DeleteLike(int userID, int reviewID)
+        public static async void DeleteLike(Guid userID, int reviewID)
         {
             await Task.Run(() =>
             {
                 using (DBContext db = new DBContext())
                 {
-                    db.ReviewLike.Remove(db.ReviewLike.Where(x => x.ClientID == userID && x.ReviewID == reviewID).First());
+                    db.ReviewLike.Remove(db.ReviewLike.Where(x => x.Client == db.Client.First(x=>x.ID== userID) && x.Review == db.Review.First(x=>x.ID == reviewID)).First());
 
                     db.SaveChanges();
                 }

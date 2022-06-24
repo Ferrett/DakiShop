@@ -31,7 +31,7 @@
                             {
                                 <div class="cart-item">
                                     <div style="width: 20%">
-                                        <img class="cart-item-image" src=@item.Key.ImagePath>
+                                        <img class="cart-item-image" src=@item.Key.ImageURL>
                                     </div>
                                     <div class="cart-item-additional-info">
                                         <div>
@@ -136,15 +136,15 @@
     private void Upd()
     {
         dakisInCart.Clear();
-        foreach (var item in DBService.itemsInCart.Where(x => x.ClientID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID))
+        foreach (var item in DBService.itemsInCart.Where(x => x.Client == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault()))
         {
-            if (dakisInCart.ContainsKey(DBService.dakimakuras.Where(x=>x.ID == item.ItemID).First()))
+            if (dakisInCart.ContainsKey(DBService.dakimakuras.Where(x=>x.ID == item.Dakimakura.ID).First()))
             {
-                dakisInCart[DBService.dakimakuras.Where(x=>x.ID == item.ItemID).First()] = dakisInCart[DBService.dakimakuras.Where(x=>x.ID == item.ItemID).First()] + 1;
+                dakisInCart[DBService.dakimakuras.Where(x=>x.ID == item.Dakimakura.ID).First()] = dakisInCart[DBService.dakimakuras.Where(x=>x.ID == item.Dakimakura.ID).First()] + 1;
             }
             else
             {
-                dakisInCart.Add(DBService.dakimakuras.Where(x=>x.ID == item.ItemID).First(), 1);
+                dakisInCart.Add(DBService.dakimakuras.Where(x=>x.ID == item.Dakimakura.ID).First(), 1);
             }
         }
          StateHasChanged();
@@ -161,7 +161,7 @@
     }
     private void OnRemove(Dakimakura d)
     {
-        DBService.itemsInCart.Remove(DBService.itemsInCart.Where(x => x.ClientID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.ItemID == d.ID).FirstOrDefault());
+        DBService.itemsInCart.Remove(DBService.itemsInCart.Where(x => x.Client.ID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.Dakimakura.ID == d.ID).FirstOrDefault());
 
         Upd();
        

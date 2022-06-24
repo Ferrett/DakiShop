@@ -91,16 +91,13 @@ namespace RaportBlazorServer.Logic
 			return Tuple.Create(true, "Производитель добавлен успешно");
 		}
 
-		public static Tuple<bool, string> ValidateNewDakimakura(string dakiNameImagePath, string dakiName, string dakiPrice, string dakiSize, string dakiFiller,bool reqNewName)
+		public static Tuple<bool, string> ValidateNewDakimakura(string dakiNameImagePath, string dakiName, string dakiPrice, string dakiHeight,string dakiWidth, string dakiFiller,bool reqNewName)
 		{
 			if (string.IsNullOrWhiteSpace(dakiNameImagePath))
 				return Tuple.Create(false, "Некорректное изображение");
 
 			if (string.IsNullOrWhiteSpace(dakiName))
 				return Tuple.Create(false, "Некорректное имя");
-
-			if (string.IsNullOrWhiteSpace(dakiSize))
-				return Tuple.Create(false, "Некорректный размер");
 
 			if (string.IsNullOrWhiteSpace(dakiFiller))
 				return Tuple.Create(false, "Некорректный наполнитель");
