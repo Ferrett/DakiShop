@@ -27,9 +27,9 @@ AWSManager.SecretKey = Config.configuration.GetSection("AWSKeys")["SecretKey"];
 
 DBService.InitDB();
 
-//DBService.AddDakimakura(1, @"https://dakisource.s3.eu-north-1.amazonaws.com/daki/248345166.jpg", "Капiтан Зеленський",5000, "170x60", "Sintepon", 4);
+//DBService.AddDakimakura(1, @"https://dakisource.s3.eu-north-1.amazonaws.com/daki/248345166.jpg", "Капiтан Зеленський",5000, 170,60, "Sintepon", 4);
 //DBService.AddDakimakura(3, @"https://dakisource.s3.eu-north-1.amazonaws.com/266947307.jpg", "Бiллi Херiнгтон",14000, "195x80", "Sintepon", 2);
-
+//DBService.AddRootUser("admin", "vovkaprikhod@gmail.com", "PRIKHOD322", "");
 
 //AWSManager.UploadFile(File.Open(@"C:\Users\User\Desktop\photo_2022-05-26_12-34-43.jpg", FileMode.Open), "dakisource", "new amogus2");
 

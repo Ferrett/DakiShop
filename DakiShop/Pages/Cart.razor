@@ -136,7 +136,7 @@
     private void Upd()
     {
         dakisInCart.Clear();
-        foreach (var item in DBService.itemsInCart.Where(x => x.Client == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault()))
+        foreach (var item in DBService.itemsInCart.Where(x => x.Client == DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault()))
         {
             if (dakisInCart.ContainsKey(DBService.dakimakuras.Where(x=>x.ID == item.Dakimakura.ID).First()))
             {
@@ -155,49 +155,27 @@
         dakisInCart.Clear();
         //Upd();
         StateHasChanged();
-        DBService.AddBuys(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID);
-        DBService.DeleteAllCart(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID);
+        DBService.AddBuys(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID);
+        DBService.DeleteAllCart(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID);
        
     }
     private void OnRemove(Dakimakura d)
     {
-        DBService.itemsInCart.Remove(DBService.itemsInCart.Where(x => x.Client.ID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.Dakimakura.ID == d.ID).FirstOrDefault());
+        DBService.itemsInCart.Remove(DBService.itemsInCart.Where(x => x.Client.ID == DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID && x.Dakimakura.ID == d.ID).FirstOrDefault());
 
         Upd();
        
-        DBService.DeleteItemFromCart(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID, d.ID);
+        DBService.DeleteItemFromCart(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID, d.ID);
     }
 
     string cartCrypted;
     string cartDecrypted;
 
-    string name;
+    Guid UserID;
     protected override async void OnInitialized()
     {
-        name = await session.GetItemAsync<string>("name");
+        UserID = await session.GetItemAsync<Guid>("UserID");
 
-        if (name != null)
-        {
-            try
-            {
-                bool root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-            }
-            catch (Exception)
-            {
-                await session.ClearAsync();
-                NavManager.NavigateTo("/authentication/", true);
-            }
-            Upd();
-        }
-        else
-        {
-            await session.ClearAsync();
-            //NavManager.NavigateTo("/authentication/", true);
-        }
-
-        
-
-        
         StateHasChanged();
     }
 }

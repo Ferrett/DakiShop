@@ -65,7 +65,7 @@ namespace DakiShop.Logic
         }
 
 
-        public static void AddReview(int dakiID, string text, int rating, string userName)
+        public static void AddReview(int dakiID, string text, int rating, Guid userID)
         {
             using (DBContext db = new DBContext())
             {
@@ -75,7 +75,7 @@ namespace DakiShop.Logic
                     Text = text,
                     Rating = rating,
                     PublishTime = DateTime.Now,
-                    Client = db.Client.FirstOrDefault(x => x.Login.ToLower().Equals(userName.ToLower()))!
+                    Client = db.Client.FirstOrDefault(x => x.ID.Equals(userID))!
                 });
                 db.SaveChanges();
             }
@@ -90,36 +90,13 @@ namespace DakiShop.Logic
                 {
                     Login = login.ToLower(),
                     Email = email.ToLower(),
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()),
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(password.ToLower(), BCrypt.Net.BCrypt.GenerateSalt()),
                     IsAdmin = true,
                     AvatarURL = avatarURL
                 });
                 db.SaveChanges();
             }
             UpdateData();
-        }
-
-        public static bool GetCurrentUserRoot(string login)
-        {
-            using (DBContext db = new DBContext())
-            {
-                return db.Client.ToList().Find(x => x.Login.Equals(login))!.IsAdmin;
-            }
-        }
-        public static Category GetCategoryByName(string name)
-        {
-            using (DBContext db = new DBContext())
-            {
-                return db.Category.ToList().Find(x => x.Name.Equals(name))!;
-            }
-        }
-
-        public static Manufacturer GetManufacturerByName(string name)
-        {
-            using (DBContext db = new DBContext())
-            {
-                return db.Manufacturer.ToList().Find(x => x.Name.Equals(name))!;
-            }
         }
 
         public static void UpdateData()
@@ -140,26 +117,24 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvatarURL= "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
+                db.Client.Add(new Client { Login = login, Email = email.ToLower(), PasswordHash = BCrypt.Net.BCrypt.HashPassword(password, BCrypt.Net.BCrypt.GenerateSalt()), IsAdmin = false, AvatarURL = "https://dakisource.s3.eu-north-1.amazonaws.com/ava/1233.jpg" });
                 db.SaveChanges();
             }
             UpdateData();
         }
-        public static bool IsUserExists(string login)
+        public static bool IsUserExists(Guid userID)
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Login == login.ToLower()))
-                    return true;
+                return db.Client.ToList().Any(x => x.ID.Equals(userID))?  true: false;
             }
-            return false;
         }
 
         public static bool UserLogIn(string login, string password)
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Login.ToLower() == login.ToLower() && BCrypt.Net.BCrypt.Verify(password, x.PasswordHash)))
+                if (db.Client.ToList().Any(x => x.Login.ToLower().Equals(login.ToLower()) && BCrypt.Net.BCrypt.Verify(password.ToLower(), x.PasswordHash)))
                     return true;
             }
 
@@ -170,17 +145,15 @@ namespace DakiShop.Logic
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Login.ToLower() == login.ToLower()))
-                    return true;
+                return db.Client.ToList().Any(x => x.Login.ToLower().Equals(login.ToLower()))? true: false;  
             }
-            return false;
         }
 
         public static bool IsEmailTaken(string email)
         {
             using (DBContext db = new DBContext())
             {
-                if (db.Client.ToList().Any(x => x.Email == email))
+                if (db.Client.ToList().Any(x => x.Email.ToLower().Equals(email)))
                     return true;
             }
             return false;
@@ -382,7 +355,7 @@ namespace DakiShop.Logic
                     {
                         Client = db.Client.First(x => x.ID == userID),
                         Dakimakura = db.Dakimakura.First(x => x.ID == itemID),
-                    }) ;
+                    });
                     db.SaveChanges();
                 }
             });
@@ -443,7 +416,7 @@ namespace DakiShop.Logic
                 {
                     db.ReviewLike.Add(new ReviewLike
                     {
-                        Client = db.Client.First(x=>x.ID ==  userID),
+                        Client = db.Client.First(x => x.ID == userID),
                         Review = db.Review.First(x => x.ID == reviewID),
                     });
 
@@ -460,19 +433,35 @@ namespace DakiShop.Logic
             {
                 using (DBContext db = new DBContext())
                 {
-                    db.ReviewLike.Remove(db.ReviewLike.Where(x => x.Client == db.Client.First(x=>x.ID== userID) && x.Review == db.Review.First(x=>x.ID == reviewID)).First());
+                    db.ReviewLike.Remove(db.ReviewLike.Where(x => x.Client == db.Client.First(x => x.ID == userID) && x.Review == db.Review.First(x => x.ID == reviewID)).First());
 
                     db.SaveChanges();
                 }
             });
+        }
 
-            using (var context = new DBContext())
+        public static bool IsRootUser(Guid userID)
+        {
+            using (DBContext db = new DBContext())
             {
-                //var query = from st in context.Manufacturer
-                //            where st.StudentName == "Bill"
-                //            select st;
+                return db.Client.Any(x => x.ID.Equals(userID)) ? db.Client.First(x => x.ID.Equals(userID)).IsAdmin : false;
+               // return db.Client.First(x => x.ID.Equals(userID)).IsAdmin;
+            }
+        }
 
-                //var student = query.FirstOrDefault<Student>();
+        public static Guid GetUserID(string login)
+        {
+            using (DBContext db = new DBContext())
+            {
+                return db.Client.First(x => x.Login.ToLower().Equals(login.ToLower())).ID;
+            }
+        }
+
+        public static string GetUserLogin(Guid userID)
+        {
+            using (DBContext db = new DBContext())
+            {
+                return db.Client.First(x => x.ID.Equals(userID)).Login;
             }
         }
     }

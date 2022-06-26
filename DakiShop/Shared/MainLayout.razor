@@ -29,7 +29,7 @@
                     <button class="common-button">Buy Dakimakura</button>
                 </NavLink>
 
-                @if (root)
+                @if (DBService.IsRootUser(UserID))
                 {
                     <NavLink href="/adminpanel">
                         <button class="common-button last-button">Admin Panel</button>
@@ -44,13 +44,13 @@
                 </NavLink>
 
                 <NavLink href="/authentication">
-                    <button class="registration-button">@(userName==null?"Log In":userName)</button>
+                    <button class="registration-button">@(UserID == Guid.Empty?"Log In":DBService.GetUserLogin(UserID))</button>
                 </NavLink>
             </div>
 
         </div>
 
-        <CascadingValue Value=btn_clicked>
+        <CascadingValue Value=sessionChanged>
 
             @Body
 
@@ -64,46 +64,20 @@
 
 
 @code {
-    //  Session
 
+    Guid UserID = Guid.Empty;
 
-    string name = "123";
-    bool root = false;
+    EventCallback sessionChanged => EventCallback.Factory.Create(this, UpdateFromSession);
 
-    public async void ClearSession()
-    {
-        await session.ClearAsync();
+    public async void UpdateFromSession()
+    { 
+        UserID = await session.GetItemAsync<Guid>("UserID");
+
+        StateHasChanged();
     }
 
     protected async override void OnInitialized()
     {
-        //ClearSession();
-
-        Test(false);
-    }
-
-
-    EventCallback btn_clicked => EventCallback.Factory.Create(this, Test);
-    string userName;
-    public async void Test(object a)
-    { 
-        name = await session.GetItemAsync<string>("name");
-        if (name != null)
-        {
-            try
-            {
-                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-                userName = StringCipher.Decrypt(name, "name");
-            }
-            catch (Exception)
-            {
-                await session.ClearAsync();
-                root = false;
-                userName = null;
-            }
-
-        }
-       
-        StateHasChanged();
+        UpdateFromSession();
     }
 }

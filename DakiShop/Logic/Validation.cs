@@ -55,7 +55,7 @@ namespace RaportBlazorServer.Logic
 			if (login.Length < MinLoginLength)
 				return Tuple.Create(false, $"Логин должен быть минимум {MinLoginLength} символов в длинну");
 
-			if (!DBService.IsUserExists(login))
+			if (!DBService.IsUserExists(DBService.GetUserID(login)))
 				return Tuple.Create(false, "Пользователь не найден");
 
 			if (!DBService.UserLogIn(login, password))

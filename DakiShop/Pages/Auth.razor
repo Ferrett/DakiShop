@@ -90,32 +90,14 @@
             if (isRegistration)
                 DBService.AddNewUser(login, email, pass);
 
-            SaveSession();
+            await session.SetItemAsync("UserID", DBService.GetUserID(login));
 
-            await btn_clicked.InvokeAsync();
+            await sessionChanged .InvokeAsync();
             NavManager.NavigateTo("/", true);
         }
     }
 
     [CascadingParameter]
-    public EventCallback btn_clicked { get; set; }
-
-
-    public async void SaveSession()
-    {
-        await session.SetItemAsync("name", StringCipher.Encrypt(login, "name"));
-
-
-        
-
-
-        StateHasChanged();
-    }
-
-    protected override async void OnInitialized()
-    {
-        
-    }
-
+    public EventCallback sessionChanged  { get; set; }
 
 }

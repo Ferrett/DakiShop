@@ -17,7 +17,7 @@
     <div class="daki-main">
         <div style="justify-content:space-between; margin-left:20%;">
             <div>
-                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name+ (root==true? $"  [{daki.ID}]":string.Empty))</span>
+                <span class="daki-desc-line2" style="font-size:35px; margin-top:15px;">@(daki.Name+ (DBService.IsRootUser(UserID)? $"  [{daki.ID}]":string.Empty))</span>
             </div>
 
             <div class="daki-card" style="margin-top:15px;">
@@ -106,15 +106,15 @@
                     </div>
                 }
                 <div style="justify-content:end; display:flex;">
-                    @if (root || (name != null && item.Client.Login.Equals(StringCipher.Decrypt(name, "name"))))
+                    @if (DBService.IsRootUser(UserID) || (UserID != null && item.Client.ID.Equals(UserID)))
                     {
 
                         <svg class="rev-del" style="margin-top:10px;" @onclick="()=>DeleteReview(item.ID)" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z" /></svg>
 
                     }
-                    @if (name != null)
+                    @if (UserID != null)
                     {
-                        <div class=@(DBService.reviewLike.Where(x=>x.Review.ID ==item.ID && x.Client.ID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID ).Count()>0?"rev-like2":"rev-like") @onclick="()=>LikeRev(item.ID)" style="justify-content:end; display:flex; margin-top:10px;">
+                        <div class=@(DBService.reviewLike.Where(x=>x.Review.ID ==item.ID && x.Client.ID == DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID ).Count()>0?"rev-like2":"rev-like") @onclick="()=>LikeRev(item.ID)" style="justify-content:end; display:flex; margin-top:10px;">
 
 
                             <svg style="fill:white;" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path d="M21.406 9.558c-1.21-.051-2.87-.278-3.977-.744.809-3.283 1.253-8.814-2.196-8.814-1.861 0-2.351 1.668-2.833 3.329-1.548 5.336-3.946 6.816-6.4 7.401v-.73h-6v12h6v-.904c2.378.228 4.119.864 6.169 1.746 1.257.541 3.053 1.158 5.336 1.158 2.538 0 4.295-.997 5.009-3.686.5-1.877 1.486-7.25 1.486-8.25 0-1.648-1.168-2.446-2.594-2.506zm-17.406 10.442h-2v-8h2v8zm15.896-5.583s.201.01 1.069-.027c1.082-.046 1.051 1.469.004 1.563l-1.761.099c-.734.094-.656 1.203.141 1.172 0 0 .686-.017 1.143-.041 1.068-.056 1.016 1.429.04 1.551-.424.053-1.745.115-1.745.115-.811.072-.706 1.235.109 1.141l.771-.031c.822-.074 1.003.825-.292 1.661-1.567.881-4.685.131-6.416-.614-2.239-.965-4.438-1.934-6.959-2.006v-6c3.264-.749 6.328-2.254 8.321-9.113.898-3.092 1.679-1.931 1.679.574 0 2.071-.49 3.786-.921 5.533 1.061.543 3.371 1.402 6.12 1.556 1.055.059 1.024 1.455-.051 1.584l-1.394.167s-.608 1.111.142 1.116z" /></svg>
@@ -181,7 +181,7 @@
 
     private void Show()
     {
-        if (name != null)
+        if (UserID != null)
         {
             popupWindow.Show();
         }
@@ -193,12 +193,12 @@
 
     private void Submit()
     {
-        if (name == null)
+        if (UserID == null)
             NavManager.NavigateTo("/authentication/", true);
         else
         {
 
-            DBService.AddReview(daki.ID, ReviewText, ReviewRating, StringCipher.Decrypt(name, "name"));
+            DBService.AddReview(daki.ID, ReviewText, ReviewRating, UserID);
 
             Close();
 
@@ -210,21 +210,21 @@
 
     private void LikeRev(int reviewID)
     {
-        if (name == null)
+        if (UserID == null)
             NavManager.NavigateTo("/authentication/", true);
         else
         {
 
-            if (DBService.reviewLike.Any(x => x.Client.ID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.Review.ID == reviewID))
+            if (DBService.reviewLike.Any(x => x.Client.ID == DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID && x.Review.ID == reviewID))
             {
-                DBService.reviewLike.Remove(DBService.reviewLike.Where(x => x.Client.ID == DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID && x.Review.ID == reviewID).FirstOrDefault());
-                DBService.DeleteLike(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID, reviewID);
+                DBService.reviewLike.Remove(DBService.reviewLike.Where(x => x.Client.ID == DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID && x.Review.ID == reviewID).FirstOrDefault());
+                DBService.DeleteLike(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID, reviewID);
 
             }
             else
             {
-                DBService.reviewLike.Add(new ReviewLike { Client = DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault(), Review = DBService.reviews.First(x=>x.ID == reviewID) });
-                DBService.AddLike(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID, reviewID);
+                DBService.reviewLike.Add(new ReviewLike { Client = DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault(), Review = DBService.reviews.First(x => x.ID == reviewID) });
+                DBService.AddLike(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID, reviewID);
             }
 
         }
@@ -279,13 +279,13 @@
 
     private async void AddToCart()
     {
-        if (name == null)
+        if (UserID == null)
             NavManager.NavigateTo("/authentication/", true);
         else
         {
 
-            DBService.itemsInCart.Add(new ItemInCart { Client = DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault(), Dakimakura = DBService.dakimakuras.First(x=>x.ID ==daki.ID)  });
-            DBService.AddItemToCart(DBService.clients.Where(x => x.Login.Equals(StringCipher.Decrypt(name, "name"))).FirstOrDefault().ID, daki.ID);
+            DBService.itemsInCart.Add(new ItemInCart { Client = DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault(), Dakimakura = DBService.dakimakuras.First(x => x.ID == daki.ID) });
+            DBService.AddItemToCart(DBService.clients.Where(x => x.ID.Equals(UserID)).FirstOrDefault().ID, daki.ID);
 
             toastService.ShowToast<AddedToCart>(_toastParameters, new ToastInstanceSettings(5, false));
         }
@@ -332,11 +332,12 @@
     }
 
 
+    Guid UserID = Guid.Empty;
 
-    bool root = false;
-    string name;
     protected override async void OnInitialized()
     {
+        UserID = await session.GetItemAsync<Guid>("UserID");
+
         daki = DBService.dakimakuras.FirstOrDefault(x => x.ID == int.Parse(ID));
 
         _toastParameters = new ToastParameters();
@@ -347,36 +348,9 @@
         _toastParameters2.Add(nameof(ReviewSent.Title), "Review successfuly sent");
         _toastParameters3.Add(nameof(ReviewDeleted.Title), "Review successfuly deleted");
 
-        try
-        {
-            name = await session.GetItemAsync<string>("name");
 
-            if (name != null)
-            {
-                try
-                {
-                    root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-                }
-                catch (Exception)
-                {
-                    await session.ClearAsync();
-                    NavManager.NavigateTo("/authentication/", true);
-                }
-
-            }
-            else
-            {
-                await session.ClearAsync();
-                //NavManager.NavigateTo("/authentication/", true);
-            }
-            StateHasChanged();
-        }
-        catch (Exception)
-        {
-
-
-        }
-
+        
+        //StateHasChanged();
 
     }
 }

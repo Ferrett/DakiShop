@@ -9,7 +9,7 @@
 
 <PageTitle>Admin Panel</PageTitle>
 
-@if (root == true)
+@if (DBService.IsRootUser(UserID))
 {
     <button class="btnAA" @onclick="(() => Show(1))">Добавить Дакимакуру</button>
     <button class="btnAA" @onclick="(() => Show(2))">Добавить Категорию</button>
@@ -431,36 +431,20 @@
     //Изменить Категорию       8
     //Изменить Производителя   9
 
-    bool root = false;
-    string name;
+    Guid UserID;
     protected async override void OnInitialized()
     {
-        name = await session.GetItemAsync<string>("name");
+        UserID = await session.GetItemAsync<Guid>("UserID");
+        StateHasChanged();
+
+
         _toastParameters3 = new ToastParameters();
         _toastParameters3.Add(nameof(SuccessAdminPanel.Title), "Changes saved");
 
-        if (name != null)
+        if (!DBService.IsRootUser(UserID))
         {
-            try
-            {
-                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-            }
-            catch (Exception)
-            {
-
-                root = false;
-            }
+            NavManager.NavigateTo("/authentication/",true);
         }
-        else
-        {
-            await session.ClearAsync();
-            NavManager.NavigateTo("/authentication/", true);
-        }
-
-        if (root == false)
-            NavManager.NavigateTo("/");
-
-        StateHasChanged();
     }
 
     private void CheckDakiID()

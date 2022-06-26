@@ -63,7 +63,7 @@
                         </div>
                         <div>
                             <hr>
-                            <div class="card-title">@(item.Name + (root==true? $"  [{item.ID}]":string.Empty))</div>
+                            <div class="card-title">@(item.Name + (DBService.IsRootUser(UserID)? $"  [{item.ID}]":string.Empty))</div>
 
                             <div class="card-info">
                                 <div style="width:70%;">
@@ -135,31 +135,13 @@
         StateHasChanged();
     }
 
-    bool root = false;
-    string name;
+
+    Guid UserID= Guid.Empty;
 
     protected override async void OnInitialized()
     {
-        name = await session.GetItemAsync<string>("name");
+        UserID = await session.GetItemAsync<Guid>("UserID");
 
-        if (name != null)
-        {
-            try
-            {
-                root = StringCipher.Decrypt(name, "name") == "admin" ? true : false;
-            }
-            catch (Exception)
-            {
-                await session.ClearAsync();
-                NavManager.NavigateTo("/authentication/", true);
-            }
-
-        }
-        else
-        {
-            await session.ClearAsync();
-            //NavManager.NavigateTo("/authentication/", true);
-        }
 
         max_price = DBService.GetMaxPriceInCategory(CategoryID);
         CurrentPrice = max_price;
