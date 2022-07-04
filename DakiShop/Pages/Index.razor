@@ -56,7 +56,6 @@
             {
                 @if (item.Price <= CurrentPrice && (item.Category.ID.Equals(CategoryID) || CategoryID == 0))
                 {
-
                     <element @onclick="(() => RedirectToItem(item.ID))" class="card" style="justify-content:space-between; flex-direction:column; display:flex;">
                         <div>
                             <img class="card-img" src=@item.ImageURL>
