@@ -22,7 +22,7 @@ namespace DakiShop.Logic
             }
         }
 
-        public static void AddDakimakura(int categoryID, string imageURL, string name, int price, int heigth, int width, string description, int manufacturerID)
+        public static void AddDakimakura(int categoryID, string imageURL, int price, string name, int heigth, int width, string description, int manufacturerID)
         {
             using (DBContext db = new DBContext())
             {

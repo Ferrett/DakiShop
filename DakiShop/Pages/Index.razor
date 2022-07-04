@@ -52,7 +52,7 @@
         }
         else
         {
-            foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
+            @foreach (var item in string.IsNullOrWhiteSpace(searchQuery) ? DBService.dakimakuras : DBService.dakimakuras.Where(x => x.Name.ToLower().Contains(searchQuery.ToLower())))
             {
                 @if (item.Price <= CurrentPrice && (item.Category.ID.Equals(CategoryID) || CategoryID == 0))
                 {
@@ -78,7 +78,7 @@
                     </element>
 
                 }
-            }
+           }
         }
     </div>
 </div>

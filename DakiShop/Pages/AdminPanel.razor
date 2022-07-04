@@ -481,7 +481,7 @@
             ErrorText = responce.Item2;
 
             if (!responce.Item1) return;
-            DBService.AddDakimakura(CategoryID + 3, DakiImageURL, DakiName, int.Parse(DakiPrice), int.Parse(DakiHeight),int.Parse(DakiWidth), DakiDescription, ManufacturerID + 1);
+            DBService.AddDakimakura(CategoryID + 3, DakiImageURL,  int.Parse(DakiPrice),DakiName, int.Parse(DakiHeight),int.Parse(DakiWidth), DakiDescription, ManufacturerID + 1);
         }
         else if (ID == 2)
         {
